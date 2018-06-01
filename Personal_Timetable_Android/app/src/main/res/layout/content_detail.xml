@@ -1,23 +1,45 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v4.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/loPhoneNumberRow"
+    android:layout_width="fill_parent"
     android:layout_height="match_parent"
-    app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:context="au.edu.tafesa.itstudies.personal_timetable_android.DetailActivity"
-    tools:showIn="@layout/activity_detail">
-
-
+    android:orientation="horizontal" >
 
     <TextView
-        android:id="@+id/SessionBrief"
+        android:id="@+id/txtTime"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="@dimen/text_margin"
-        android:text="@string/large_text" />
+        android:layout_weight="0.15"
+        android:layout_height="35dp"
+        android:textSize="20dp"
+        android:textAlignment="center"
+        android:enabled="false"
+        android:textColor="@drawable/ic_home_black_24dp"
+        android:text="9:00 - 11:00" />
+
+    <TextView
+        android:id="@+id/txtSubject"
+        android:layout_width="wrap_content"
+        android:layout_weight="0.35"
+        android:layout_height="35dp"
+        android:textSize="20dp"
+        android:textAlignment="center"
+        android:enabled="false"
+        android:textColor="@drawable/ic_home_black_24dp"
+        android:text="5work" />
+
+    <TextView
+        android:id="@+id/txtRoom"
+        android:layout_width="wrap_content"
+        android:layout_weight="0.35"
+        android:layout_height="35dp"
+        android:textAlignment="center"
+        android:textSize="20dp"
+        android:enabled="false"
+        android:textColor="@drawable/ic_home_black_24dp"
+        android:text="B301" />
 
 
 
 
-</android.support.v4.widget.NestedScrollView>
+
+</LinearLayout>

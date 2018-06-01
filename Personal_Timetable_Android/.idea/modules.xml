@@ -3,9 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/Personal_Timetable_Android.iml" filepath="$PROJECT_DIR$/Personal_Timetable_Android.iml" />
-      <module fileurl="file://$PROJECT_DIR$/../../../../lung7/Desktop/5WORK1/5WorkAndroid_Timable/Personal_Timetable_Android/Personal_Timetable_Android.iml" filepath="$PROJECT_DIR$/../../../../lung7/Desktop/5WORK1/5WorkAndroid_Timable/Personal_Timetable_Android/Personal_Timetable_Android.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
-      <module fileurl="file://$PROJECT_DIR$/../../../../lung7/Desktop/5WORK1/5WorkAndroid_Timable/Personal_Timetable_Android/app/app.iml" filepath="$PROJECT_DIR$/../../../../lung7/Desktop/5WORK1/5WorkAndroid_Timable/Personal_Timetable_Android/app/app.iml" />
     </modules>
   </component>
 </project>

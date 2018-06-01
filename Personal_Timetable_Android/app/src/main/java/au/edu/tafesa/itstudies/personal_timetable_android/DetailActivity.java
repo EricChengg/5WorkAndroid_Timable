@@ -1,5 +1,6 @@
 package au.edu.tafesa.itstudies.personal_timetable_android;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -22,6 +23,7 @@ import java.sql.Time;
 
 public class DetailActivity extends AppCompatActivity {
 
+    ClassInfo classInfo = new ClassInfo();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -37,10 +39,31 @@ public class DetailActivity extends AppCompatActivity {
                         .setAction("Action", null).show();
             }
         });
+
+        int i = 0;
+        String theSubject;
+        int theSessionNo;
+        Intent classIntent;
+        classIntent = this.getIntent();
+
+        theSubject = classIntent.getStringExtra("SUBJECT_NAME");
+        theSessionNo = classIntent.getIntExtra("THE_SESSION_NO",i);
+
+
+
+
+
+
+
     }
 
-    public void DetailActivity()
+
+    private void setSummary(String theSubjecy, int theSessionNo)
     {
-        ClassInfo classInfo;
+        classInfo.get
+        StringBuilder summary;
+
+        summary = new StringBuilder("Time : ");
+        summary.append()
     }
 }
