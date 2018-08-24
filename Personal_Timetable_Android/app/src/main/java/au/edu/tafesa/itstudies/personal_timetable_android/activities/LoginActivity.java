@@ -21,12 +21,14 @@ import au.edu.tafesa.itstudies.personal_timetable_android.models.Student;
 /**
  * A login screen that offers login via email/password.
  */
+
 public class LoginActivity extends AppCompatActivity {
     private static final int LOGIN_REQUEST = 1;
 
+    private SQLiteDatabase database = null;
     TimetableDAO timetableDAO = new TimetableDAO();
-    //private SQLiteDatabase database;
     SQLiteHelper sqLiteHelper = new SQLiteHelper(this);
+
 
     /**
      * Id to identity READ_CONTACTS permission request.
@@ -35,50 +37,47 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-
-
-        //Students  Adding student to list;
-
-
-
         Button btnLogin = (Button) findViewById(R.id.email_sign_in_button);
         HandleButtonLoginClick handleButtonLoginClick = new HandleButtonLoginClick();
         btnLogin.setOnClickListener(handleButtonLoginClick);
     }
 
     public class HandleButtonLoginClick implements View.OnClickListener {
-
-        //int theID = Integer.parseInt(txtLoginID.getText().toString());
-
-        //Student MeiCheng = new Student(001, "Mei Lung Cheng", "12345");
-        int theId;
-
-
         public void onClick(View v) {
+            SQLiteHelper sqLiteHelper = new SQLiteHelper(LoginActivity.this);
 
+
+            database = sqLiteHelper.getWritableDatabase();
+
+            // get id and password from edit text.
             EditText txtPassword = (EditText) findViewById(R.id.password);
             EditText txtLoginID = (EditText) findViewById(R.id.loginID);
 
-            //int theID = Integer.parseInt(txtLoginID.getId());
-            String theid = txtLoginID.getText().toString();
-            int id = Integer.parseInt(theid);
-//            List<Student> studentList = timetableDAO.getStudentDAO();
+            // change string id to int
+
+
+            String password = txtPassword.getText().toString();
+
+            int id = Integer.parseInt(txtLoginID.getText().toString());
+            if ((sqLiteHelper.verifyStudentLogin(database, id, password)) != 0) {
+                Intent intent = new Intent();
+                intent.putExtra("LONIN_ID",id);
+                intent.setClass(LoginActivity.this, IndexActivity.class);
+                startActivity(intent);
+            } else {
+                Toast.makeText(LoginActivity.this, "The student ID or password is not correct.", Toast.LENGTH_LONG).show();
+                Toast.makeText(LoginActivity.this, "Please try ID:103500 / Password: 5work.", Toast.LENGTH_LONG).show();
+
+            }
+        }
+    }
+}
+
 //
 //            MysqlCon mysqlCon = new MysqlCon();
 //            mysqlCon.getStudent();
 //
 //            try {
-
-                if(sqLiteHelper.getStudentID(id)!= 0)
-                {
-                    Intent intent = new Intent();
-                    intent.setClass(LoginActivity.this, IndexActivity.class);
-                    startActivity(intent);
-                }
-                else
-                {
-                    Toast.makeText(LoginActivity.this, "The student ID or password is not correct.", Toast.LENGTH_LONG).show();
-                }
 //                for (int i = 0; i < studentList.size(); i++)
 //                    if (studentList.get(i).getStudentID() == id) {
 //                        Toast.makeText(LoginActivity.this, "loading...", Toast.LENGTH_LONG).show();
@@ -98,9 +97,8 @@ public class LoginActivity extends AppCompatActivity {
 //            {
 //                Toast.makeText(LoginActivity.this, "Error", Toast.LENGTH_LONG).show();
 //            }
-        }
-    }
-}
+
+
 
 //    private static final int REQUEST_READ_CONTACTS = 0;
 //
