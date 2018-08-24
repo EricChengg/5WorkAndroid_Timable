@@ -39,9 +39,10 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:hint="@string/prompt_email"
-                    android:inputType="textEmailAddress"
+                    android:inputType="number"
                     android:maxLines="1"
                     android:textSize="23dp"
+                    android:text="103500"
                     android:singleLine="true" />
 
             </android.support.design.widget.TextInputLayout>
