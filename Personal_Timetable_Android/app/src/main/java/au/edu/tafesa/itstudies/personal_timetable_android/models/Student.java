@@ -8,14 +8,10 @@ public class Student {
     private String name;
     private String loginPassword;
 
-    private List<Course>courseList;
-
-
     public Student(int studentID, String name, String loginPassword) {
         this.studentID = studentID;
         this.name = name;
         this.loginPassword = loginPassword;
-        this.courseList = new LinkedList<Course>();
     }
 
     public int getStudentID() {
@@ -40,19 +36,5 @@ public class Student {
 
     public void setLoginPassword(String loginPassword) {
         this.loginPassword = loginPassword;
-    }
-
-    public List<Course> getCourseList() {
-        return courseList;
-    }
-
-    public void setCourseList(List<Course> courseList) {
-        this.courseList = courseList;
-    }
-
-    public Course AddCourse(Course c)
-    {
-        this.courseList.add(c);
-        return c;
     }
 }

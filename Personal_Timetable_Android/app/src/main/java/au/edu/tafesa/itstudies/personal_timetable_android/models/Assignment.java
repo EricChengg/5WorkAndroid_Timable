@@ -11,7 +11,7 @@ public class Assignment {
     private int assignmentID;
     private String assignmentName;
     private String dueDate;
-    private Course course;
+    private Class theClass;
 
     public Assignment()
     {
@@ -20,11 +20,11 @@ public class Assignment {
         this.dueDate = DEFAULT_DUEDATE;
     }
 
-    public Assignment(int assignmentID, String assignmentName, String dueDate, Course course) {
+    public Assignment(int assignmentID, String assignmentName, String dueDate, Class theClass) {
         this.assignmentID = assignmentID;
         this.assignmentName = assignmentName;
         this.dueDate = dueDate;
-        this.course = course;
+        this.theClass = theClass;
     }
 
     public int getAssignmentID() {
@@ -51,11 +51,11 @@ public class Assignment {
         this.dueDate = dueDate;
     }
 
-    public Course getCourse() {
-        return course;
+    public Class getTheClass() {
+        return theClass;
     }
 
-    public void setCourse(Course course) {
-        this.course = course;
+    public void setTheClass(Class theClass) {
+        this.theClass = theClass;
     }
 }

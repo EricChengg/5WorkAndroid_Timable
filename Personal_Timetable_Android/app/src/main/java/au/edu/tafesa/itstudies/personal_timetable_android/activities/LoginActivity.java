@@ -10,6 +10,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import au.edu.tafesa.itstudies.personal_timetable_android.ConnectDatabase.MysqlCon;
@@ -26,8 +27,10 @@ public class LoginActivity extends AppCompatActivity {
     private static final int LOGIN_REQUEST = 1;
 
     private SQLiteDatabase database = null;
-    TimetableDAO timetableDAO = new TimetableDAO();
+    //TimetableDAO timetableDAO = new TimetableDAO();
     SQLiteHelper sqLiteHelper = new SQLiteHelper(this);
+
+    private static final String THE_STUDENT_ID = "THE_STUDENT_ID";
 
 
     /**
@@ -37,17 +40,24 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
+        database = sqLiteHelper.getWritableDatabase();
+
+//        int id = 103500;
+//        List<Class>classList = new ArrayList<Class>();
+//        classList = sqLiteHelper.getClassIDList(database, id);
         Button btnLogin = (Button) findViewById(R.id.email_sign_in_button);
         HandleButtonLoginClick handleButtonLoginClick = new HandleButtonLoginClick();
         btnLogin.setOnClickListener(handleButtonLoginClick);
+
+
     }
 
     public class HandleButtonLoginClick implements View.OnClickListener {
         public void onClick(View v) {
-            SQLiteHelper sqLiteHelper = new SQLiteHelper(LoginActivity.this);
+            //SQLiteHelper sqLiteHelper = new SQLiteHelper(LoginActivity.this);
 
 
-            database = sqLiteHelper.getWritableDatabase();
+            //database = sqLiteHelper.getWritableDatabase();
 
             // get id and password from edit text.
             EditText txtPassword = (EditText) findViewById(R.id.password);
@@ -61,11 +71,11 @@ public class LoginActivity extends AppCompatActivity {
             int id = Integer.parseInt(txtLoginID.getText().toString());
             if ((sqLiteHelper.verifyStudentLogin(database, id, password)) != 0) {
                 Intent intent = new Intent();
-                intent.putExtra("LONIN_ID",id);
+                intent.putExtra(THE_STUDENT_ID,id);
                 intent.setClass(LoginActivity.this, IndexActivity.class);
                 startActivity(intent);
             } else {
-                Toast.makeText(LoginActivity.this, "The student ID or password is not correct.", Toast.LENGTH_LONG).show();
+
                 Toast.makeText(LoginActivity.this, "Please try ID:103500 / Password: 5work.", Toast.LENGTH_LONG).show();
 
             }

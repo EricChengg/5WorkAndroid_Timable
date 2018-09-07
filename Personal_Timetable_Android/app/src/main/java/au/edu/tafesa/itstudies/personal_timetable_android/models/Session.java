@@ -1,24 +1,40 @@
 package au.edu.tafesa.itstudies.personal_timetable_android.models;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class Session {
 
     private int sessionID;
-    private int sessionNo;
-    private String subject;
     private String topic;
-    private String sessionDate;
-    private Course course;
+    private Date startTime;
+    private Date endTime;
+    private Date Date;
+    private String room;
+    private int classID;
+    private int subjectID;
 
+    public Session() {
+    }
 
-    public Session(int sessionID, int sessionNo, String subject, String topic, String sessionDate, Course course) {
+    public Session(int sessionID, String topic, java.util.Date startTime, java.util.Date endTime, java.util.Date date, String room) {
         this.sessionID = sessionID;
-        this.sessionNo = sessionNo;
-        this.subject = subject;
         this.topic = topic;
-        this.sessionDate = sessionDate;
-        this.course = course;
+        this.startTime = startTime;
+        this.endTime = endTime;
+        Date = date;
+        this.room = room;
+    }
+
+    public Session(int sessionID, String topic, java.util.Date startTime, java.util.Date endTime, java.util.Date date, String room, int classID, int subjectID) {
+        this.sessionID = sessionID;
+        this.topic = topic;
+        this.startTime = startTime;
+        this.endTime = endTime;
+        Date = date;
+        this.room = room;
+        this.classID = classID;
+        this.subjectID = subjectID;
     }
 
     public int getSessionID() {
@@ -29,22 +45,6 @@ public class Session {
         this.sessionID = sessionID;
     }
 
-    public int getSessionNo() {
-        return sessionNo;
-    }
-
-    public void setSessionNo(int sessionNo) {
-        this.sessionNo = sessionNo;
-    }
-
-    public String getSubject() {
-        return subject;
-    }
-
-    public void setSubject(String subject) {
-        this.subject = subject;
-    }
-
     public String getTopic() {
         return topic;
     }
@@ -53,23 +53,51 @@ public class Session {
         this.topic = topic;
     }
 
-    public String getSessionDate() {
-        return sessionDate;
+    public java.util.Date getStartTime() {
+        return startTime;
     }
 
-    public void setSessionDate(String sessionDate) {
-        this.sessionDate = sessionDate;
+    public void setStartTime(java.util.Date startTime) {
+        this.startTime = startTime;
     }
 
-    public Course getCourse() {
-        return course;
+    public java.util.Date getEndTime() {
+        return endTime;
     }
 
-    public void setCourse(Course course) {
-        this.course = course;
+    public void setEndTime(java.util.Date endTime) {
+        this.endTime = endTime;
     }
 
+    public java.util.Date getDate() {
+        return Date;
+    }
 
+    public void setDate(java.util.Date date) {
+        Date = date;
+    }
 
+    public String getRoom() {
+        return room;
+    }
 
+    public void setRoom(String room) {
+        this.room = room;
+    }
+
+    public int getClassID() {
+        return classID;
+    }
+
+    public void setClassID(int classID) {
+        this.classID = classID;
+    }
+
+    public int getSubjectID() {
+        return subjectID;
+    }
+
+    public void setSubjectID(int subjectID) {
+        this.subjectID = subjectID;
+    }
 }

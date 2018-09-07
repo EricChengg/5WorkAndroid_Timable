@@ -11,7 +11,7 @@ public class Test {
     private int testID;
     private String testName;
     private String testDate;
-    private Course course;
+    private Class theClass;
 
     public Test()
     {
@@ -20,11 +20,11 @@ public class Test {
         this.testDate = DEFAULT_DATE;
     }
 
-    public Test(int testID, String testName, String testDate, Course course) {
+    public Test(int testID, String testName, String testDate, Class theClass) {
         this.testID = testID;
         this.testName = testName;
         this.testDate = testDate;
-        this.course = course;
+        this.theClass = theClass;
     }
 
     public int getTestID() {
@@ -51,11 +51,11 @@ public class Test {
         this.testDate = testDate;
     }
 
-    public Course getCourse() {
-        return course;
+    public Class getTheClass() {
+        return theClass;
     }
 
-    public void setCourse(Course course) {
-        this.course = course;
+    public void setTheClass(Class theClass) {
+        this.theClass = theClass;
     }
 }
