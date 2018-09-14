@@ -5,6 +5,7 @@ import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.*;
 
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -13,35 +14,34 @@ import java.util.List;
 import au.edu.tafesa.itstudies.personal_timetable_android.models.Campus;
 import au.edu.tafesa.itstudies.personal_timetable_android.models.Class;
 import au.edu.tafesa.itstudies.personal_timetable_android.models.ClassHasStudent;
+import au.edu.tafesa.itstudies.personal_timetable_android.models.Classes;
 import au.edu.tafesa.itstudies.personal_timetable_android.models.Session;
 import au.edu.tafesa.itstudies.personal_timetable_android.models.Sessions;
+import au.edu.tafesa.itstudies.personal_timetable_android.models.Subject;
+import au.edu.tafesa.itstudies.personal_timetable_android.models.Subjects;
 
 public class SQLiteHelper extends SQLiteOpenHelper {
 
-    public static final String CLASS_TAG = "SQLiteHelper";
-    public static final String passowrd = "5work";
     public SQLiteDatabase db;
-
     public ClassHasStudent theClassHasStudent;
 
     public List<ClassHasStudent> cs = new ArrayList<ClassHasStudent>();
 
-    public Class theClass;
+    //public List<Class> ClassList = new ArrayList<Class>();
 
-    public List<Class> ClassList = new ArrayList<Class>();
+    public Sessions sessions = new Sessions();
 
-    public Sessions sessions;
+    public Subjects subjects = new Subjects();
 
-    public SQLiteHelper(Context context)
-    {
-        super(context, "Timetable.db", null,1);
+    public Classes classes = new Classes();
+
+    public SQLiteHelper(Context context) {
+        super(context, "Timetable.db", null, 1);
     }
 
-    public void onCreate(SQLiteDatabase db)
-    {
+    public void onCreate(SQLiteDatabase db) {
         try {
             //create table
-
             db.execSQL("CREATE TABLE IF NOT EXISTS `Student` (\n" +
                     "  `studentID` INT NOT NULL,\n" +
                     "  `studentName` VARCHAR(45) ,\n" +
@@ -66,136 +66,103 @@ public class SQLiteHelper extends SQLiteOpenHelper {
                     "  `address` VARCHAR(45) ,\n" +
                     "  PRIMARY KEY (`CampusID`))");
 
-
             db.execSQL("CREATE TABLE IF NOT EXISTS `Class` (\n" +
                     "  `classID` INT NOT NULL,\n" +
                     "  `Lecture_lectureID` INT NOT NULL,\n" +
-                    "  `Subject_subjectID` INT NOT NULL,\n" +
                     "  `Campus_CampusID` INT NOT NULL,\n" +
-                    "  PRIMARY KEY (`classID`, `Subject_subjectID`),\n" +
-                    //"  CONSTRAINT `fk_Class_Lecture1`\n" +
+                    "  `Subject_subjectID` INT NOT NULL,\n" +
+                    "  PRIMARY KEY (`classID`),\n" +
+                    "  CONSTRAINT `fk_Class_Lecture1`\n" +
                     "    FOREIGN KEY (`Lecture_lectureID`)\n" +
                     "    REFERENCES `Lecture` (`lectureID`)\n" +
-                    "    ON DELETE NO ACTION ON UPDATE NO ACTION,\n" +
-                   // "  CONSTRAINT `fk_Class_Subject1`\n" +
+                    "    ON DELETE NO ACTION\n" +
+                    "    ON UPDATE NO ACTION,\n" +
+                    "  CONSTRAINT `fk_Class_Subject1`\n" +
                     "    FOREIGN KEY (`Subject_subjectID`)\n" +
                     "    REFERENCES `Subject` (`subjectID`)\n" +
-                    "    ON DELETE NO ACTION ON UPDATE NO ACTION,\n" +
-                   // "  CONSTRAINT `fk_Class_Campus1`\n" +
+                    "    ON DELETE NO ACTION\n" +
+                    "    ON UPDATE NO ACTION,\n" +
+                    "  CONSTRAINT `fk_Class_Campus1`\n" +
                     "    FOREIGN KEY (`Campus_CampusID`)\n" +
                     "    REFERENCES `Campus` (`CampusID`)\n" +
-                    "    ON DELETE NO ACTION ON UPDATE NO ACTION)");
-
-            db.execSQL("CREATE TABLE IF NOT EXISTS `Assignment` (\n" +
-                    "  `assignmentID` INT NOT NULL,\n" +
-                    "  `name` VARCHAR(45) ,\n" +
-                    "  `dueDate` DATE ,\n" +
-                    "  `Class_classID` INT NOT NULL,\n" +
-                    "  `Class_Subject_subjectID` INT NOT NULL,\n" +
-                    "  PRIMARY KEY (`assignmentID`, `Class_classID`, `Class_Subject_subjectID`),\n" +
-                   // "  CONSTRAINT `fk_Assignment_Class1`\n" +
-                    "    FOREIGN KEY (`Class_classID` , `Class_Subject_subjectID`)\n" +
-                    "    REFERENCES `Class` (`classID` , `Subject_subjectID`)\n" +
                     "    ON DELETE NO ACTION\n" +
                     "    ON UPDATE NO ACTION)");
 
-            db.execSQL("CREATE TABLE IF NOT EXISTS `Test` (\n" +
-                    "  `testID` INT NOT NULL,\n" +
-                    "  `testName` VARCHAR(45) ,\n" +
-                    "  `testDate` DATE ,\n" +
+            db.execSQL("CREATE TABLE IF NOT EXISTS `Assessment` (\n" +
+                    "  `assessmentID` INT not null,\n" +
+                    "  `name` VARCHAR(45) ,\n" +
+                    "  `dueDate` DATE ,\n" +
+                    "  `type` VARCHAR(10) ,\n" +
                     "  `Class_classID` INT NOT NULL,\n" +
-                    "  `Class_Subject_subjectID` INT NOT NULL,\n" +
-                    "  PRIMARY KEY (`testID`, `Class_classID`, `Class_Subject_subjectID`),\n" +
-                   // "  CONSTRAINT `fk_Test_Class1`\n" +
-                    "    FOREIGN KEY (`Class_classID` , `Class_Subject_subjectID`)\n" +
-                    "    REFERENCES `Class` (`classID` , `Subject_subjectID`)\n" +
+                    "  PRIMARY KEY (`assessmentID`),\n" +
+                    "  CONSTRAINT `fk_Assessment_Class1`\n" +
+                    "    FOREIGN KEY (`Class_classID`)\n" +
+                    "    REFERENCES `Class` (`classID`)\n" +
                     "    ON DELETE NO ACTION\n" +
                     "    ON UPDATE NO ACTION)");
 
             db.execSQL("CREATE TABLE IF NOT EXISTS `Session` (\n" +
                     "  `sessionID` INT NOT NULL,\n" +
-                    "  `topic` VARCHAR(45),\n" +
-                    "  `startTime` TIME,\n" +
-                    "  `endTime` TIME,\n" +
-                    "  `room` VARCHAR(6),\n" +
-                    "  `date` DATE,\n" +
+                    "  `sessionNo` INT ,\n" +
+                    "  `topic` VARCHAR(45) ,\n" +
+                    "  `startTime` TIME ,\n" +
+                    "  `endTime` TIME ,\n" +
+                    "  `room` VARCHAR(6) ,\n" +
+                    "  `date` DATE ,\n" +
                     "  `Class_classID` INT NOT NULL,\n" +
-                    "  `Class_Subject_subjectID` INT NOT NULL,\n" +
-                    "  PRIMARY KEY (`sessionID`, `Class_classID`, `Class_Subject_subjectID`),\n" +
-                    //"  CONSTRAINT `fk_Session_Class1`\n" +
-                    "    FOREIGN KEY (`Class_classID` , `Class_Subject_subjectID`)\n" +
-                    "    REFERENCES `Class` (`classID` , `Subject_subjectID`)\n" +
+                    "  PRIMARY KEY (`sessionID`),\n" +
+                    "  CONSTRAINT `fk_Session_Class1`\n" +
+                    "    FOREIGN KEY (`Class_classID`)\n" +
+                    "    REFERENCES `Class` (`classID`)\n" +
                     "    ON DELETE NO ACTION\n" +
                     "    ON UPDATE NO ACTION)");
 
-
             db.execSQL("CREATE TABLE IF NOT EXISTS `Class_has_Student` (\n" +
                     "  `Class_classID` INT NOT NULL,\n" +
-                    "  `Class_Subject_subjectID` INT NOT NULL,\n" +
                     "  `Student_studentID` INT NOT NULL,\n" +
-                    "  PRIMARY KEY (`Class_classID`),\n"+
-                  //  "  CONSTRAINT `fk_Class_has_Student_Class1`\n" +
-                    "    FOREIGN KEY (`Class_classID` , `Class_Subject_subjectID`)\n" +
-                    "    REFERENCES `Class` (`classID` , `Subject_subjectID`)\n" +
+                    "  PRIMARY KEY (`Class_classID`, `Student_studentID`),\n" +
+                    "  CONSTRAINT `fk_Class_has_Student_Class1`\n" +
+                    "    FOREIGN KEY (`Class_classID`)\n" +
+                    "    REFERENCES `Class` (`classID`)\n" +
                     "    ON DELETE NO ACTION\n" +
                     "    ON UPDATE NO ACTION,\n" +
-                  //  "  CONSTRAINT `fk_Class_has_Student_Student1`\n" +
+                    "  CONSTRAINT `fk_Class_has_Student_Student1`\n" +
                     "    FOREIGN KEY (`Student_studentID`)\n" +
                     "    REFERENCES `Student` (`studentID`)\n" +
                     "    ON DELETE NO ACTION\n" +
                     "    ON UPDATE NO ACTION)");
-
-            //create index
-//            db.execSQL("CREATE INDEX fk_Class_Lecture1_idx on Class(Lecture_lectureID)");
-//
-//            db.execSQL("CREATE INDEX fk_Class_Subject1_idx on Class (Subject_subjectID)");
-//
-//            db.execSQL("CREATE INDEX fk_Assignment_Class1_idx on Assignment (Class_classID, Class_Subject_subjectID)");
-//
-//            db.execSQL("CREATE INDEX fk_Test_Class1_idx on Test (Class_classID, Class_Subject_subjectID)");
-//
-//            db.execSQL("CREATE INDEX fk_Campus_has_Class_Class1_idx on Campus_has_Class (Class_courseID, Class_Subject_subjectID)");
-//            db.execSQL("CREATE INDEX fk_Campus_has_Class_Campus1_idx on Campus_has_Class (Campus_CampusID)");
-//
-//            db.execSQL("CREATE INDEX fk_Class_has_Student_Student1_idx on Class_has_Student (Student_studentID)");
-//            db.execSQL("CREATE INDEX fk_Class_has_Student_Class1_idx on Class_has_Student(Class_classID, Class_Subject_subjectID)");
-
-
             onInsert(db);
-
-        }
-        catch(Exception e)
-        {
+        } catch (Exception e) {
             System.out.println("Error in creating table.");
             System.out.println(e.getMessage());
         }
     }
 
-    private static void onInsert(SQLiteDatabase db)
-    {
-        try
-        {
+    private static void onInsert(SQLiteDatabase db) {
+        try {
             //Student Subject Lecture Class Assignment Test Campus Session Class_has_Student
             db.execSQL("INSERT INTO student values(103500,'Eric','5work')");
 
             db.execSQL("INSERT INTO Subject values(1,'5Work','Workplace Project')");
+            db.execSQL("INSERT INTO Subject values(2,'6Work','Testing Project')");
 
             db.execSQL("INSERT INTO Lecture values(1,'Kym')");
 
-            db.execSQL("INSERT INTO Class Values(1,1,1,1)");
-
-            db.execSQL("INSERT INTO Assignment values(1,'Assignment1','12/1/2018',1,1)");
-
-            db.execSQL("INSERT INTO Test values(1,'Test1','12/1/2018',1,1)");
-
             db.execSQL("INSERT INTO Campus values(1,'Testcamput','test','testing')");
 
-            db.execSQL("INSERT INTO Session values(1,'Testing session','14:00','16:00','31/08/2018',1,1)");
+            db.execSQL("INSERT INTO Class Values(1,1,1,1)");
+            db.execSQL("INSERT INTO Class Values(2,1,1,2)");
 
-            db.execSQL("INSERT INTO Class_has_Student values(1,1,103500)");
-        }
-        catch(Exception e)
-        {
+            db.execSQL("insert INTO Assessment values(1,'testing name','2012-06-18','Test',1)");
+
+            db.execSQL("INSERT INTO Session values(1,1,'Testing session','14:00','16:00','B003','2018-10-13',1)");
+            db.execSQL("INSERT INTO Session values(2,1,'Testing2 session','17:00','19:00','B002','2018-9-13',2)");
+
+
+            db.execSQL("INSERT INTO Class_has_Student values(1,103500)");
+            db.execSQL("INSERT INTO Class_has_Student values(2,103500)");
+
+        } catch (Exception e) {
             System.out.println(e.getMessage());
         }
     }
@@ -207,12 +174,9 @@ public class SQLiteHelper extends SQLiteOpenHelper {
     }
 
     public int verifyStudentLogin(SQLiteDatabase db, int id, String password) {
-        String[] columns = new String[2];
+        String[] columns = {"studentID", "loginPassword"};
         String[] whereValues = new String[2];
         String table = "Student";
-
-        columns[0]  = "studentID";
-        columns[1] = "loginPassword";
         String where = "studentID =? and loginPassword =?";
         whereValues[0] = String.valueOf(id);
         whereValues[1] = password;
@@ -220,40 +184,25 @@ public class SQLiteHelper extends SQLiteOpenHelper {
         String having = null;
         String orderBy = null;
         String limit = null;
-        Cursor c = db.query(table,columns,where,whereValues,groupBy,having,orderBy,limit);
+        Cursor c = db.query(table, columns, where, whereValues, groupBy, having, orderBy, limit);
 
-        if(c!= null && c.getCount() == 1)
-        {
+        if (c != null && c.getCount() == 1) {
             c.close();
             return id;
-        }
-        else
-        {
+        } else {
             c.close();
             return 0;
         }
     }
 
-    public List<ClassHasStudent> getClassHasStudent(SQLiteDatabase db,int id)
-    {
-//        String[] columns = {"Class_classID","Student_studentID","Class_Subject_subjectID"};
-//        String[] whereValues = {"Student_studentID =?"};
-//        String table = "Class_has_Student";
-//        String where = "Student_studentID =?";
-//        String[] whereValue ={String.valueOf(id)};
 
-        String[] columns = new String[3];
+    public List<ClassHasStudent> getClassHasStudent(SQLiteDatabase db, int id) {
+
+        String[] columns ={"Class_classID","Student_studentID"};
         String[] whereValues = new String[1];
         String table = "Class_has_Student";
-
-        columns[0] = "Class_classID";
-        columns[1] = "Class_Subject_subjectID";
-        columns[2] = "Student_studentID";
-
         String where = "Student_studentID =?";
         whereValues[0] = String.valueOf(id);
-
-
         String groupBy = null;
         String having = null;
         String orderBy = null;
@@ -261,13 +210,13 @@ public class SQLiteHelper extends SQLiteOpenHelper {
 
         try {
             Cursor c = db.query(table, columns, where, whereValues, groupBy, having, orderBy, limit);
-            if(c != null) {
+            int y = c.getColumnCount();
+            if (c != null) {
                 c.moveToFirst();
                 for (int i = 0; i < c.getCount(); i++) {
                     int classID = c.getInt(c.getColumnIndex("Class_classID"));
-                    int subjectID = c.getInt(c.getColumnIndex("Class_Subject_subjectID"));
                     int studentID = c.getInt(c.getColumnIndex("Student_studentID"));
-                    theClassHasStudent = new ClassHasStudent(classID,subjectID,studentID);
+                    theClassHasStudent = new ClassHasStudent(classID, studentID);
                     cs.add(theClassHasStudent);
                     c.moveToNext();
                     System.out.println(theClassHasStudent.toString());
@@ -275,86 +224,155 @@ public class SQLiteHelper extends SQLiteOpenHelper {
 
                 c.close();
 
-            }
-            else
-            {
+            } else {
                 System.out.println("Cursor is null.");
                 System.out.println(cs.toString());
                 c.close();
                 cs = null;
             }
-        }
-        catch (SQLException e)
-        {
+        } catch (SQLException e) {
             System.out.println("Error :" + e.getMessage());
         }
         return cs;
     }
 
-
-
     public Sessions getSessionList(SQLiteDatabase db, List<ClassHasStudent> cs) {
-
-        String[] columns = {"sessionID", "topic", "startTime", "endTime", "room", "date", "Class_classID", "Class_Subject_subjectID"};
-        String[] whereValues = new String[cs.size()*2];
-        List<String> values = new ArrayList<String>();
-        for (int i = 0; i < whereValues.length; i++) {
-            whereValues[i] = String.valueOf(cs.get(i).getclassID());
-            whereValues[i+1] = String.valueOf(cs.get(i).getSubjectID());
-        }
-        String table = "Session";
-        String where = "Class_classID =? and Class_Subject_subjectID =?";
-
-        String groupBy = null;
-        String having = null;
-        String orderBy = null;
-        String limit = null;
-
         try {
+            String[] columns = {"sessionID","sessionNo","topic","startTime","endTime","room","date","Class_classID" };
+            String[] whereValues = new String[cs.size()];
+            String where = "Class_classID =?";
+            String[] w = new String[cs.size()];
+
+            for(int i = 0 ; i < cs.size() ; i++) {
+                whereValues[i] = String.valueOf(cs.get(i).getclassID());
+                if(i + 1 < cs.size()) {
+                    w[i] = " or Class_classID =? ";
+                    where += w[i];
+                }
+                else
+                {
+                    //noting to do
+                }
+            }
+            String table = "Session";
+            String groupBy = null;
+            String having = null;
+            String orderBy = null;
+            String limit = null;
             Cursor c = db.query(table, columns, where, whereValues, groupBy, having, orderBy, limit);
-            c.moveToFirst();
+            if (c != null) {
+                c.moveToFirst();
+                SimpleDateFormat theDate = new SimpleDateFormat("yyyy-MM-dd");
+                SimpleDateFormat theTime = new SimpleDateFormat("hh:mm");
 
-            //LocalDate date = LocalDate.parse("2018-05-05");
-            SimpleDateFormat theDate = new SimpleDateFormat("dd/MM/yyyy");
-            SimpleDateFormat theTime = new SimpleDateFormat("HH:mm");
+                for (int i = 0; i < c.getCount(); i++) {
+                    int sessionID = c.getInt(c.getColumnIndex("sessionID"));
+                    int sessionNo = c.getInt(c.getColumnIndex("sessionNo"));
+                    String topic = c.getString(c.getColumnIndex("topic"));
+                    Date startTime = theTime.parse(c.getString(c.getColumnIndex("startTime")));
+                    Date endTime = theTime.parse(c.getString(c.getColumnIndex("endTime")));
+                    Date date = theDate.parse(c.getString(c.getColumnIndex("date")));
+                    String room = c.getString(c.getColumnIndex("room"));
+                    int classID = c.getInt(c.getColumnIndex("Class_classID"));
 
-            for (int i = 0; i < c.getCount(); i++) {
-
-                int sessionID = c.getInt(c.getColumnIndex("sessionID"));
-                String topic = c.getString(c.getColumnIndex("topic"));
-                Date startTime = theTime.parse(c.getString(c.getColumnIndex("startTime")));
-                Date endTime = theTime.parse(c.getString(c.getColumnIndex("endTime")));
-                Date date = theDate.parse(c.getString(c.getColumnIndex("date")));
-                String room = c.getString(c.getColumnIndex("room"));
-                int classID = c.getInt(c.getColumnIndex("Class_classID"));
-                int subjectID = c.getInt(c.getColumnIndex("Class_Subject_subjectID"));
-
-                //System.out.println(c.getString(3));
-                //Date date1=new SimpleDateFormat("dd/MM/yyyy").parse(sDate1);
-//                Date startDate = theDate.parse(c.getString(3));
-                // Date startDate = theDate.(c.getString(3));
-
-//                Date endDate = new java.sql.Date(c.getLong(4));
-//                Date starttime = new java.sql.Date(c.getLong(5));
-//                Date endTime = new java.sql.Date(c.getLong(6));
-
-                sessions.save(new Session(sessionID, topic, startTime, endTime, date, room));
-                c.moveToNext();
-
-
+                    Session s = new Session(sessionID, sessionNo, topic, startTime, endTime, room, date, classID);
+                    sessions.save(s);
+                    System.out.println(sessions.toString());
+                    c.moveToNext();
+                }
             }
             c.close();
             return sessions;
         } catch (Exception e) {
             System.out.println(e);
+            System.out.println("Error");
             return null;
         }
-
-
     }
 
-//    public List<Campus> getCampus(SQLException db)
-//    {
-//
-//    }
+    public Classes findClassByClasshasStudent(SQLiteDatabase db, List<ClassHasStudent> cs) {
+        try {
+
+            String[] columns = {"classID", "Lecture_lectureID", "Campus_CampusID", "Subject_subjectID"};
+            String[] whereValues = new String[cs.size()];
+            String table = "Class";
+            String where = "classID =?";
+            String[] w = new String[cs.size()];
+            for (int i = 0; i < cs.size(); i++) {
+                whereValues[i] = String.valueOf(cs.get(i).getclassID());
+                if (i + 1 < cs.size()) {
+                    w[i] = " or classID =? ";
+                    where += w[i];
+                }
+                else
+                {
+                    //noting to do
+                }
+                System.out.println(whereValues.toString());
+            }
+
+            String groupBy = null;
+            String having = null;
+            String orderBy = null;
+            String limit = null;
+
+            Cursor c = db.query(table, columns, where, whereValues, groupBy, having, orderBy, limit);
+            c.moveToFirst();
+            for (int i = 0; i < c.getCount(); i++) {
+                int classID = c.getInt(c.getColumnIndex("classID"));
+                int lectureID = c.getInt(c.getColumnIndex("Lecture_lectureID"));
+                int subjectID = c.getInt(c.getColumnIndex("Subject_subjectID"));
+                int CampusID = c.getInt(c.getColumnIndex("Campus_CampusID"));
+                Class theClass = new Class(classID, lectureID, subjectID, CampusID);
+                this.classes.save(theClass);
+                c.moveToNext();
+            }
+            c.close();
+            return this.classes;
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            return null;
+        }
+    }
+
+    public Subjects findSessionsBysubjectID(SQLiteDatabase db, Classes theClasses){
+
+        try {
+            String[] columns = {"subjectID", "subjectCode", "subjectName"};
+            String[] whereValues = new String[theClasses.getSize()];
+            String table = "Subject";
+            String where = "subjectID =?";
+            String[] w = new String[theClasses.getSize()];
+            for (int i = 0; i < theClasses.getSize(); i++) {
+                whereValues[i] = String.valueOf(theClasses.getById(i).getSubjectID());
+                if(i +1  < theClasses.getSize()) {
+                    w[i] = " or subjectID =? ";
+                    where += w[i];
+                }
+            }
+
+            String groupBy = null;
+            String having = null;
+            String orderBy = null;
+            String limit = null;
+
+            Cursor c = db.query(table, columns, where, whereValues, groupBy, having, orderBy, limit);
+            c.moveToFirst();
+            for (int i = 0; i < c.getCount(); i++) {
+                int subjectID = c.getInt(c.getColumnIndex("subjectID"));
+                String subjectCode = c.getString(c.getColumnIndex("subjectCode"));
+                String subjectName = c.getString(c.getColumnIndex("subjectName"));
+                Subject s = new Subject(subjectID, subjectCode, subjectName);
+                subjects.save(s);
+                c.moveToNext();
+            }
+            c.close();
+            return subjects;
+        }
+        catch (Exception e) {
+            System.out.println(e.getMessage());
+            return null;
+        }
+    }
 }
+

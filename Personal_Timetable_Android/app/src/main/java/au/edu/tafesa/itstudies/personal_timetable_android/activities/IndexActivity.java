@@ -7,49 +7,42 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Adapter;
-import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
-
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
-
 import au.edu.tafesa.itstudies.personal_timetable_android.R;
 import au.edu.tafesa.itstudies.personal_timetable_android.SQlite.SQLiteHelper;
 import au.edu.tafesa.itstudies.personal_timetable_android.models.Class;
 import au.edu.tafesa.itstudies.personal_timetable_android.models.ClassHasStudent;
-import au.edu.tafesa.itstudies.personal_timetable_android.models.Session;
+import au.edu.tafesa.itstudies.personal_timetable_android.models.Classes;
 import au.edu.tafesa.itstudies.personal_timetable_android.models.Sessions;
+import au.edu.tafesa.itstudies.personal_timetable_android.models.Subjects;
 
 public class IndexActivity extends AppCompatActivity {
     private static final String THE_STUDENT_ID = "THE_STUDENT_ID";
 
     private TextView mTextMessage;
-    private int studentID;
-    //public Class theClass;
-    private SQLiteDatabase database = null;
 
-    //private List<Integer> classIDList = new ArrayList<Integer>();
-    private int adapterNumber;
-    //SQLiteHelper sqLiteHelper = new SQLiteHelper(this);
-    public List<Class> classList = new ArrayList<Class>();
-    public Sessions sessions;
+    public int studentID;
+    //public Class theClass;
+    public SQLiteDatabase database = null;
+
+    Classes classes = new Classes();
+
+    Subjects subjects = new Subjects();
+
+    Sessions sessions = new Sessions();
+    //public List<Session> sessionList = new ArrayList<Session>();
 
     public List<ClassHasStudent> cs = new ArrayList<ClassHasStudent>();
-
-
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -81,17 +74,15 @@ public class IndexActivity extends AppCompatActivity {
         // testing it is work.
         Toast.makeText(IndexActivity.this,"The student ID: " + studentID, Toast.LENGTH_LONG).show();
 
-
         mTextMessage = (TextView) findViewById(R.id.message);
         BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
 
-        SQLiteHelper sqLiteHelper = new SQLiteHelper(IndexActivity.this);
-
         //Writ data to sqlite
-        database = sqLiteHelper.getWritableDatabase();
-        cs = sqLiteHelper.getClassHasStudent(database, studentID);
-        sessions = sqLiteHelper.getSessionList(database, cs);
+//        database = sqLiteHelper.getWritableDatabase();
+//        cs = sqLiteHelper.getClassHasStudent(database, studentID);
+//        sessions = sqLiteHelper.getSessionList(database, cs);
+        runData();
 
         //setting the List View
         ListView listView = (ListView) this.findViewById(R.id.lvschedule);
@@ -100,21 +91,21 @@ public class IndexActivity extends AppCompatActivity {
         //set list view to be button
        // ScheduleOnClickListener scheduleOnClickListener = new ScheduleOnClickListener();
        // listView.setOnClickListener(scheduleOnClickListener);
-
-
-
-
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        //SQLiteDatabase.deleteDatabase();
+        System.out.println("onDestroy");
+    }
+
+
     private class ScheduleViewAdapter extends BaseAdapter{
-        private TextView txtTime = (TextView) findViewById(R.id.txtTime);;
-        private TextView txtCourse = (TextView) findViewById(R.id.txtCourse);;
-        private TextView txtRoom = (TextView) findViewById(R.id.txtRoom);;
-
-
         @Override
         public int getCount() {
-            return classList.size();
+            int i = sessions.getSize();
+            return i;
         }
 
         @Override
@@ -124,37 +115,54 @@ public class IndexActivity extends AppCompatActivity {
 
         @Override
         public long getItemId(int i) {
-            return 0;
+            return i;
+        }
+
+        private class RowViewComponents{
+            public TextView txtTime;
+            public TextView txtCourse;
+            public TextView txtRoom;
         }
 
         @Override
         public View getView(int i, View view, ViewGroup viewGroup) {
 
+            SimpleDateFormat theDate = new SimpleDateFormat("yyyy-MM-dd");
+            SimpleDateFormat theTime = new SimpleDateFormat("hh:mm");
+
+            View v;
             LayoutInflater inflater = (LayoutInflater) (IndexActivity.this).getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            view = inflater.inflate(R.layout.timetable_row_layout,viewGroup,false);
+            v = inflater.inflate(R.layout.timetable_row_layout,viewGroup,false);
+            RowViewComponents theComponents = new RowViewComponents();
 
+            theComponents.txtTime = (TextView) v.findViewById(R.id.txtTime);
+            theComponents.txtCourse = (TextView) v.findViewById(R.id.txtCourse);
+            theComponents.txtRoom = (TextView) v.findViewById(R.id.txtRoom);
 
+            TextView t = theComponents.txtTime;
+            TextView c = theComponents.txtCourse;
+            TextView r = theComponents.txtRoom;
 
-            for(Session s : sessions.getSessions())
-            {
-                txtTime.setText(s.getStartTime()+ " - " + s.getEndTime());
-                txtCourse.setText(s.getTopic());
-                txtRoom.setText(s.getRoom());
-            }
+                String startTime = theTime.format(sessions.getById(i).getStartTime());
+                String endTime = theTime.format(sessions.getById(i).getEndTime());
+//                String subjectCode = subjects.getById(i).getSubjectCode();
+                String theRoom = sessions.getById(i).getRoom();
 
-            //get course list via courseID list
-//            courseDataLoader = sqLiteHelper.getCourse(database,classIDList);
-//            for (Class c: ) {
-//                txtTime.setText(c.getStartTime().toString()+" - "+ c.getEndTime().toString());
-//                txtCourse.setText(c.getCourseCode());
-//                txtRoom.setText(c.getRoom());
-//                view = txtCourse;
-//                view = txtRoom;
-//                view = txtTime;
-//
-//            }
-            return view;
+                t.setText(startTime + " - " + endTime);
+//                c.setText(subjectCode);
+                r.setText(theRoom);
+            return v;
         }
+    }
+    public void runData()
+    {
+        SQLiteHelper sqLiteHelper = new SQLiteHelper(IndexActivity.this);
+        database = sqLiteHelper.getWritableDatabase();
+        cs = sqLiteHelper.getClassHasStudent(database, studentID);
+        sessions = sqLiteHelper.getSessionList(database, cs);
+        classes = sqLiteHelper.findClassByClasshasStudent(database,cs);
+        subjects = sqLiteHelper.findSessionsBysubjectID(database, classes);
+        System.out.println(subjects.toString());
     }
 
     private class ScheduleOnClickListener implements View.OnClickListener {
@@ -164,7 +172,4 @@ public class IndexActivity extends AppCompatActivity {
 
         }
     }
-
-
-
 }

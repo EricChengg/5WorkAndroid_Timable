@@ -7,10 +7,6 @@ public class Sessions {
 
     private List<Session> sessions = new ArrayList<Session>();
 
-    public void save(Session s)
-    {
-        sessions.add(s);
-    }
 
     public List<Session> getSessions() {
         return sessions;
@@ -19,4 +15,26 @@ public class Sessions {
     public void setSessions(List<Session> sessions) {
         this.sessions = sessions;
     }
+
+    public int getSize()
+    {
+        return sessions.size();
+    }
+
+    public Session getById(int id){
+        return sessions.get(id);
+    }
+
+    public void save(Session s) {
+        sessions.add(s);
+    }
+
+    @Override
+    public String toString() {
+        return "Sessions{" +
+                "sessions=" + sessions +
+                '}';
+    }
+
+
 }

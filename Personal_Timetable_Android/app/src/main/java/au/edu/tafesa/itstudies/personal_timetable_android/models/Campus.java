@@ -5,11 +5,16 @@ import java.util.List;
 public class Campus{
     private int campusID;
     private String campusName;
+    private String campusCode;
     private String address;
 
-    public Campus(int campusID, String campusName, String address) {
+    public Campus() {
+    }
+
+    public Campus(int campusID, String campusName, String campusCode, String address) {
         this.campusID = campusID;
         this.campusName = campusName;
+        this.campusCode = campusCode;
         this.address = address;
     }
 
@@ -29,6 +34,14 @@ public class Campus{
         this.campusName = campusName;
     }
 
+    public String getCampusCode() {
+        return campusCode;
+    }
+
+    public void setCampusCode(String campusCode) {
+        this.campusCode = campusCode;
+    }
+
     public String getAddress() {
         return address;
     }
@@ -37,4 +50,15 @@ public class Campus{
         this.address = address;
     }
 
+    @Override
+    public String toString() {
+        return "Campus{" +
+                "campusID=" + campusID +
+                ", campusName='" + campusName + '\'' +
+                ", campusCode='" + campusCode + '\'' +
+                ", address='" + address + '\'' +
+                '}';
+    }
 }
+
+

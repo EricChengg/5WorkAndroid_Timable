@@ -41,10 +41,6 @@ public class LoginActivity extends AppCompatActivity {
         setContentView(R.layout.activity_login);
 
         database = sqLiteHelper.getWritableDatabase();
-
-//        int id = 103500;
-//        List<Class>classList = new ArrayList<Class>();
-//        classList = sqLiteHelper.getClassIDList(database, id);
         Button btnLogin = (Button) findViewById(R.id.email_sign_in_button);
         HandleButtonLoginClick handleButtonLoginClick = new HandleButtonLoginClick();
         btnLogin.setOnClickListener(handleButtonLoginClick);
@@ -54,24 +50,14 @@ public class LoginActivity extends AppCompatActivity {
 
     public class HandleButtonLoginClick implements View.OnClickListener {
         public void onClick(View v) {
-            //SQLiteHelper sqLiteHelper = new SQLiteHelper(LoginActivity.this);
-
-
-            //database = sqLiteHelper.getWritableDatabase();
-
-            // get id and password from edit text.
             EditText txtPassword = (EditText) findViewById(R.id.password);
             EditText txtLoginID = (EditText) findViewById(R.id.loginID);
-
-            // change string id to int
-
-
             String password = txtPassword.getText().toString();
 
             int id = Integer.parseInt(txtLoginID.getText().toString());
             if ((sqLiteHelper.verifyStudentLogin(database, id, password)) != 0) {
                 Intent intent = new Intent();
-                intent.putExtra(THE_STUDENT_ID,id);
+                intent.putExtra(THE_STUDENT_ID, id);
                 intent.setClass(LoginActivity.this, IndexActivity.class);
                 startActivity(intent);
             } else {
@@ -107,7 +93,6 @@ public class LoginActivity extends AppCompatActivity {
 //            {
 //                Toast.makeText(LoginActivity.this, "Error", Toast.LENGTH_LONG).show();
 //            }
-
 
 
 //    private static final int REQUEST_READ_CONTACTS = 0;

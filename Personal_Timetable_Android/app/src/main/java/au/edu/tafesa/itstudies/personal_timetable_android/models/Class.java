@@ -10,14 +10,16 @@ public class Class {
     private int classID;
     private int subjectID;
     private int lecturerID;
+    private int CampusID;
 
     public Class() {
     }
 
-    public Class(int classID, int subjectID, int lecturerID) {
+    public Class(int classID, int subjectID, int lecturerID, int campusID) {
         this.classID = classID;
         this.subjectID = subjectID;
         this.lecturerID = lecturerID;
+        CampusID = campusID;
     }
 
     public int getClassID() {
@@ -44,12 +46,21 @@ public class Class {
         this.lecturerID = lecturerID;
     }
 
+    public int getCampusID() {
+        return CampusID;
+    }
+
+    public void setCampusID(int campusID) {
+        CampusID = campusID;
+    }
+
     @Override
     public String toString() {
         return "Class{" +
                 "classID=" + classID +
                 ", subjectID=" + subjectID +
                 ", lecturerID=" + lecturerID +
+                ", CampusID=" + CampusID +
                 '}';
     }
 }
