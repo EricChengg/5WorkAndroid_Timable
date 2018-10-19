@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/loTimetableRow"
     android:layout_width="fill_parent"
     android:layout_height="50dp"
+    android:background="#ffe238"
     android:orientation="horizontal" >
 
     <TextView
@@ -32,4 +32,6 @@
         android:textSize="10pt"
         android:text="Room" />
     />
+
+
 </LinearLayout>

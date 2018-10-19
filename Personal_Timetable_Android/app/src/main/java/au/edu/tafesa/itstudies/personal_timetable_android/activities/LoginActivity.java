@@ -26,41 +26,52 @@ import au.edu.tafesa.itstudies.personal_timetable_android.models.Student;
 public class LoginActivity extends AppCompatActivity {
     private static final int LOGIN_REQUEST = 1;
 
+
     private SQLiteDatabase database = null;
-    //TimetableDAO timetableDAO = new TimetableDAO();
+
     SQLiteHelper sqLiteHelper = new SQLiteHelper(this);
 
     private static final String THE_STUDENT_ID = "THE_STUDENT_ID";
 
-
-    /**
-     * Id to identity READ_CONTACTS permission request.
-     */
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-
+        // running sqlitedatabase
         database = sqLiteHelper.getWritableDatabase();
+
+        // getting and setting login button
         Button btnLogin = (Button) findViewById(R.id.email_sign_in_button);
         HandleButtonLoginClick handleButtonLoginClick = new HandleButtonLoginClick();
         btnLogin.setOnClickListener(handleButtonLoginClick);
+        sqLiteHelper.onUpgrade(database,1,1);
 
 
     }
 
+    // setting login function
     public class HandleButtonLoginClick implements View.OnClickListener {
         public void onClick(View v) {
+
+            // getting stduent id and password input from edit text.
             EditText txtPassword = (EditText) findViewById(R.id.password);
             EditText txtLoginID = (EditText) findViewById(R.id.loginID);
-            String password = txtPassword.getText().toString();
 
+            // convent edit text to String and int.
+            String password = txtPassword.getText().toString();
             int id = Integer.parseInt(txtLoginID.getText().toString());
+
+            // looking for the id and password in the sqlite
+            // if the cursor row is one, go to index page. if the cursor is not one it will display error message or another id and password.
             if ((sqLiteHelper.verifyStudentLogin(database, id, password)) != 0) {
                 Intent intent = new Intent();
                 intent.putExtra(THE_STUDENT_ID, id);
                 intent.setClass(LoginActivity.this, IndexActivity.class);
                 startActivity(intent);
-            } else {
+            }
+//            else if((sqLiteHelper.verifyStudentLogin(database, id, password)) > 1){
+//                Toast.makeText(LoginActivity.this, "Error, please contact IT support team.", Toast.LENGTH_LONG).show();
+//            }
+            else {
 
                 Toast.makeText(LoginActivity.this, "Please try ID:103500 / Password: 5work.", Toast.LENGTH_LONG).show();
 
@@ -69,31 +80,8 @@ public class LoginActivity extends AppCompatActivity {
     }
 }
 
-//
-//            MysqlCon mysqlCon = new MysqlCon();
-//            mysqlCon.getStudent();
-//
-//            try {
-//                for (int i = 0; i < studentList.size(); i++)
-//                    if (studentList.get(i).getStudentID() == id) {
-//                        Toast.makeText(LoginActivity.this, "loading...", Toast.LENGTH_LONG).show();
-//                        Intent intent = new Intent();
-//                        intent.setClass(LoginActivity.this, IndexActivity.class);
-//                        startActivity(intent);
-//                        break;
-//                    } else if (studentList.get(i).getStudentID() != id) {
-//                        Toast.makeText(LoginActivity.this, "The number is " + studentList.get(i).getStudentID(), Toast.LENGTH_LONG).show();
-//                        break;
-//                    } else {
-//                        Toast.makeText(LoginActivity.this, "The student ID or password is not correct.", Toast.LENGTH_LONG).show();
-//                        break;
-//                    }
-//            }
-//            catch (Exception e)
-//            {
-//                Toast.makeText(LoginActivity.this, "Error", Toast.LENGTH_LONG).show();
-//            }
 
+//==================default code====================
 
 //    private static final int REQUEST_READ_CONTACTS = 0;
 //

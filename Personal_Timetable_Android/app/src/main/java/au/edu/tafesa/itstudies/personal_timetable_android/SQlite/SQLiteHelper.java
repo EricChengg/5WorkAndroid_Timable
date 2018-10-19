@@ -7,6 +7,7 @@ import android.database.sqlite.*;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -15,6 +16,7 @@ import au.edu.tafesa.itstudies.personal_timetable_android.models.Campus;
 import au.edu.tafesa.itstudies.personal_timetable_android.models.Class;
 import au.edu.tafesa.itstudies.personal_timetable_android.models.ClassHasStudent;
 import au.edu.tafesa.itstudies.personal_timetable_android.models.Classes;
+import au.edu.tafesa.itstudies.personal_timetable_android.models.Schedule;
 import au.edu.tafesa.itstudies.personal_timetable_android.models.Session;
 import au.edu.tafesa.itstudies.personal_timetable_android.models.Sessions;
 import au.edu.tafesa.itstudies.personal_timetable_android.models.Subject;
@@ -155,8 +157,9 @@ public class SQLiteHelper extends SQLiteOpenHelper {
 
             db.execSQL("insert INTO Assessment values(1,'testing name','2012-06-18','Test',1)");
 
-            db.execSQL("INSERT INTO Session values(1,1,'Testing session','14:00','16:00','B003','2018-10-13',1)");
-            db.execSQL("INSERT INTO Session values(2,1,'Testing2 session','17:00','19:00','B002','2018-9-13',2)");
+            db.execSQL("INSERT INTO Session values(1,1,'Testing session','14:00','16:00','B003','2018-10-18',1)");
+            db.execSQL("INSERT INTO Session values(2,1,'Testing2 session','17:00','19:00','B002','2018-10-24',2)");
+            db.execSQL("INSERT INTO Session values(3,1,'Testing3 session','17:00','19:00','B002','2018-10-27',2)");
 
 
             db.execSQL("INSERT INTO Class_has_Student values(1,103500)");
@@ -170,6 +173,14 @@ public class SQLiteHelper extends SQLiteOpenHelper {
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         db.execSQL("DROP TABLE IF EXISTS Student");
+        db.execSQL("DROP TABLE IF EXISTS Class_has_Student");
+        db.execSQL("DROP TABLE IF EXISTS Subject");
+        db.execSQL("DROP TABLE IF EXISTS Class");
+        db.execSQL("DROP TABLE IF EXISTS Assessment");
+        db.execSQL("DROP TABLE IF EXISTS Session");
+        db.execSQL("DROP TABLE IF EXISTS Campus");
+        db.execSQL("DROP TABLE IF EXISTS Lecture");
+
         onCreate(db);
     }
 
@@ -277,7 +288,6 @@ public class SQLiteHelper extends SQLiteOpenHelper {
 
                     Session s = new Session(sessionID, sessionNo, topic, startTime, endTime, room, date, classID);
                     sessions.save(s);
-                    System.out.println(sessions.toString());
                     c.moveToNext();
                 }
             }
@@ -344,7 +354,7 @@ public class SQLiteHelper extends SQLiteOpenHelper {
             String where = "subjectID =?";
             String[] w = new String[theClasses.getSize()];
             for (int i = 0; i < theClasses.getSize(); i++) {
-                whereValues[i] = String.valueOf(theClasses.getById(i).getSubjectID());
+                whereValues[i] = String.valueOf(theClasses.get(i).getSubjectID());
                 if(i +1  < theClasses.getSize()) {
                     w[i] = " or subjectID =? ";
                     where += w[i];
@@ -365,6 +375,7 @@ public class SQLiteHelper extends SQLiteOpenHelper {
                 Subject s = new Subject(subjectID, subjectCode, subjectName);
                 subjects.save(s);
                 c.moveToNext();
+                System.out.println(subjects.toString());
             }
             c.close();
             return subjects;
@@ -373,6 +384,49 @@ public class SQLiteHelper extends SQLiteOpenHelper {
             System.out.println(e.getMessage());
             return null;
         }
+    }
+
+    public List<Schedule> getSchedule(SQLiteDatabase db){
+        try {
+            LocalDate localDate = LocalDate.now().plusYears(1);
+            String MY_QUERY = "select Subject.subjectID, Class.classID, Session.sessionID, Subject.subjectCode, Session.startTime, Session.endTime, Session.date, Session.room\n" +
+                    "from Session\n" +
+                    "inner join Class on Session.Class_classID = Class.classID\n " +
+                    "inner join Subject on Class.Subject_subjectID = Subject.subjectID\n" +
+                    "where Session.date Between '2010-10-10' and '2020-10-10'";
+
+            System.out.println(MY_QUERY.toString());
+
+            SimpleDateFormat theDate = new SimpleDateFormat("yyyy-MM-dd");
+            SimpleDateFormat theTime = new SimpleDateFormat("hh:mm");
+            List<Schedule> schedules = new ArrayList<Schedule>();
+            Cursor c = db.rawQuery(MY_QUERY,null);
+            if(c != null) {
+                c.moveToFirst();
+                for (int i = 0; i < c.getCount(); i++) {
+                    int subjectID = 1;
+                    c.getInt(c.getColumnIndex("Subject.subjectID"));
+                    int classID = c.getInt(c.getColumnIndex("Class.classID"));
+                    int sessionID = c.getInt(c.getColumnIndex("Session.sessionID"));
+                    String subjectCode = c.getString(c.getColumnIndex("Subject.subjectCode"));
+                    Date startTime = theTime.parse(c.getString(c.getColumnIndex("Session.startTime")));
+                    Date endTime = theTime.parse(c.getString(c.getColumnIndex("Session.endTime")));
+                    Date date = theDate.parse(c.getString(c.getColumnIndex("Session.date")));
+                    String room = c.getString(c.getColumnIndex("Session.room"));
+                    schedules.add(new Schedule(subjectID, classID, sessionID, subjectCode, startTime, endTime, date, room));
+                    c.moveToNext();
+                    System.out.println(subjects.toString());
+                }
+                c.close();
+                return schedules;
+            }
+            c.close();
+            return null;
+        }
+        catch (Exception e){
+            return null;
+        }
+
     }
 }
 

@@ -21,8 +21,16 @@ public class Sessions {
         return sessions.size();
     }
 
-    public Session getById(int id){
-        return sessions.get(id);
+    public Session getByClassID(int ClassID){
+        for(int i = 0; i < sessions.size(); i++)
+        {
+            Session s = sessions.get(i);
+            if(s.getClassID() == ClassID)
+            {
+                return s;
+            }
+        }
+        return null;
     }
 
     public void save(Session s) {

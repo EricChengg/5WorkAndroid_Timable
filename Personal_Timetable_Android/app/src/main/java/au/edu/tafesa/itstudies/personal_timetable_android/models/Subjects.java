@@ -30,12 +30,16 @@ public class Subjects {
         return this.s.size();
     }
 
-    public Subject getById(int id) {
-        for(int i = 0; i < s.size(); i++) {
+    public Subject getBySubjectID(int subjectID){
+        for(int i = 0 ; i < s.size(); i++)
+        {
             Subject subject = s.get(i);
-            if(subject.getSubjectID()== id){
-                return s.get(id);
+            if(subject.getSubjectID() == subjectID)
+            {
+                return subject;
             }
+
+
         }
         return null;
     }

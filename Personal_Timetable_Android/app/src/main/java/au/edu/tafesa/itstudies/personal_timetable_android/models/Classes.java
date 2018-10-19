@@ -29,8 +29,18 @@ public class Classes {
         classes.add(c);
     }
 
-    public Class getById(int id){
-        return classes.get(id);
+    public Class getByClassID(int classID){
+        for(int i = 0; i< classes.size();i++){
+            Class c = classes.get(i);
+            if(c.getClassID() == classID){
+                return c;
+            }
+        }
+        return null;
+    }
+
+    public Class get(int i){
+        return classes.get(i);
     }
 
 }
