@@ -9,12 +9,48 @@
     android:layout_height="match_parent"
     tools:context="au.edu.tafesa.itstudies.personal_timetable_android.activities.IndexActivity">
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:orientation="horizontal"
+        android:layout_weight=".50">
+
+        <ImageButton
+            android:id="@+id/earlyWeekImageButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight=".20"
+            android:layout_gravity="center"
+            android:contentDescription="Early week button"
+            app:srcCompat="@drawable/back" />
+
+        <TextView
+            android:id="@+id/weektextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight=".50"
+            android:textSize="20dp"
+            android:text="14 / 9 ~ 20 / 9"
+            android:gravity="center"
+            android:layout_gravity="center"/>
+
+        <ImageButton
+            android:id="@+id/nextWeekImageButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight=".20"
+            android:layout_gravity="center"
+            android:contentDescription="Next week button"
+            app:srcCompat="@drawable/go" />
+    </LinearLayout>
+
 
 
     <ListView
         android:id="@+id/lvschedule"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" >
+        android:layout_height="match_parent"
+        android:layout_marginTop="40dp">
     </ListView>
 
 

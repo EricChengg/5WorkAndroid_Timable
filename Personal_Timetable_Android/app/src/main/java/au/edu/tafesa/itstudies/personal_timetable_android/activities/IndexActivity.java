@@ -15,14 +15,20 @@ import android.view.ViewGroup;
 import android.widget.Adapter;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
+import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import org.w3c.dom.Text;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.temporal.WeekFields;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -39,13 +45,13 @@ import au.edu.tafesa.itstudies.personal_timetable_android.models.Session;
 import au.edu.tafesa.itstudies.personal_timetable_android.models.Sessions;
 import au.edu.tafesa.itstudies.personal_timetable_android.models.Subjects;
 
+@SuppressWarnings("AccessStaticViaInstance")
 public class IndexActivity extends AppCompatActivity {
     private static final String THE_STUDENT_ID = "THE_STUDENT_ID";
-
     public SimpleDateFormat theDate = new SimpleDateFormat("yyyy-MM-dd");
     public SimpleDateFormat theTime = new SimpleDateFormat("HH:mm");
 
-    private TextView mTextMessage;
+
     public int studentID;
     public SQLiteDatabase database = null;
     SQLiteHelper sqLiteHelper = new SQLiteHelper(IndexActivity.this);
@@ -57,6 +63,11 @@ public class IndexActivity extends AppCompatActivity {
     public List<String> header = new ArrayList<String>();
     public List<ClassHasStudent> cs = new ArrayList<ClassHasStudent>();
 
+//    ImageButton earlyWeekButton = (ImageButton)findViewById(R.id.earlyWeekImageButton);
+//    ImageButton nextWeekButton = (ImageButton)findViewById(R.id.nextWeekImageButton);
+//    TextView weekTextView = (TextView) findViewById(R.id.weektextView);
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -67,7 +78,7 @@ public class IndexActivity extends AppCompatActivity {
         studentID = intent.getIntExtra(THE_STUDENT_ID,0);
         // testing it is work.
         Toast.makeText(IndexActivity.this,"The student ID: " + studentID, Toast.LENGTH_LONG).show();
-        mTextMessage = (TextView) findViewById(R.id.message);
+
 
         try {
             runData();
@@ -82,6 +93,15 @@ public class IndexActivity extends AppCompatActivity {
         listView.setOnItemClickListener(listViewItemSelectedHandler);
         sqLiteHelper.onUpgrade(database,1,1);
     }
+
+    private class earlyweekButtonHandler implements View.OnClickListener{
+
+        @Override
+        public void onClick(View view) {
+
+        }
+    }
+
 
     @Override
     protected void onDestroy() {
@@ -136,14 +156,10 @@ public class IndexActivity extends AppCompatActivity {
         @Override
         public View getView(int i, View v, ViewGroup viewGroup) {
             RowViewComponents theComponents;
-            View rowView;
-
             int rowType = getItemViewType(i);
             theComponents = new RowViewComponents();
             if(v == null){
                 LayoutInflater inflater = (LayoutInflater)(IndexActivity.this).getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-                rowView = inflater.inflate(R.layout.timetable_row_layout,viewGroup,false);
-
                 switch (rowType){
                     case TYPE_ITEM:
                         v = inflater.inflate(R.layout.timetable_row_layout,null);
@@ -252,7 +268,9 @@ public class IndexActivity extends AppCompatActivity {
         }
     }
 
+    @SuppressWarnings("AccessStaticViaInstance")
     public static String toStringOfDate(LocalDateTime date){
+        //noinspection AccessStaticViaInstance
         if(date.getDayOfWeek().equals(date.getDayOfWeek().MONDAY)){
             return "Mon";
         }

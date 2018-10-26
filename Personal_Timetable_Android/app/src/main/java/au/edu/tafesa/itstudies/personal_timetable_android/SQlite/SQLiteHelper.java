@@ -9,6 +9,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -191,11 +192,7 @@ public class SQLiteHelper extends SQLiteOpenHelper {
         String where = "studentID =? and loginPassword =?";
         whereValues[0] = String.valueOf(id);
         whereValues[1] = password;
-        String groupBy = null;
-        String having = null;
-        String orderBy = null;
-        String limit = null;
-        Cursor c = db.query(table, columns, where, whereValues, groupBy, having, orderBy, limit);
+        Cursor c = db.query(table, columns, where, whereValues, null, null, null, null);
 
         if (c != null && c.getCount() == 1) {
             c.close();
@@ -208,21 +205,15 @@ public class SQLiteHelper extends SQLiteOpenHelper {
 
 
     public List<ClassHasStudent> getClassHasStudent(SQLiteDatabase db, int id) {
-
         String[] columns ={"Class_classID","Student_studentID"};
         String[] whereValues = new String[1];
         String table = "Class_has_Student";
         String where = "Student_studentID =?";
         whereValues[0] = String.valueOf(id);
-        String groupBy = null;
-        String having = null;
-        String orderBy = null;
-        String limit = null;
-
         try {
-            Cursor c = db.query(table, columns, where, whereValues, groupBy, having, orderBy, limit);
+            Cursor c = db.query(table, columns, where, whereValues, null, null, null, null);
             int y = c.getColumnCount();
-            if (c != null) {
+            if (y > 0) {
                 c.moveToFirst();
                 for (int i = 0; i < c.getCount(); i++) {
                     int classID = c.getInt(c.getColumnIndex("Class_classID"));
@@ -266,11 +257,7 @@ public class SQLiteHelper extends SQLiteOpenHelper {
                 }
             }
             String table = "Session";
-            String groupBy = null;
-            String having = null;
-            String orderBy = null;
-            String limit = null;
-            Cursor c = db.query(table, columns, where, whereValues, groupBy, having, orderBy, limit);
+            Cursor c = db.query(table, columns, where, whereValues, null, null, null, null);
             if (c != null) {
                 c.moveToFirst();
                 SimpleDateFormat theDate = new SimpleDateFormat("yyyy-MM-dd");
@@ -314,19 +301,11 @@ public class SQLiteHelper extends SQLiteOpenHelper {
                     w[i] = " or classID =? ";
                     where += w[i];
                 }
-                else
-                {
+                else {
                     //noting to do
                 }
-                System.out.println(whereValues.toString());
             }
-
-            String groupBy = null;
-            String having = null;
-            String orderBy = null;
-            String limit = null;
-
-            Cursor c = db.query(table, columns, where, whereValues, groupBy, having, orderBy, limit);
+            Cursor c = db.query(table, columns, where, whereValues, null, null, null, null);
             c.moveToFirst();
             for (int i = 0; i < c.getCount(); i++) {
                 int classID = c.getInt(c.getColumnIndex("classID"));
@@ -360,13 +339,7 @@ public class SQLiteHelper extends SQLiteOpenHelper {
                     where += w[i];
                 }
             }
-
-            String groupBy = null;
-            String having = null;
-            String orderBy = null;
-            String limit = null;
-
-            Cursor c = db.query(table, columns, where, whereValues, groupBy, having, orderBy, limit);
+            Cursor c = db.query(table, columns, where, whereValues, null, null, null, null);
             c.moveToFirst();
             for (int i = 0; i < c.getCount(); i++) {
                 int subjectID = c.getInt(c.getColumnIndex("subjectID"));

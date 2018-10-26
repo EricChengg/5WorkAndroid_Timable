@@ -8,4 +8,5 @@
     <string name="action_sign_in_short">Sign in</string>
     <string name="title_activity_index">IndexActivity</string>
     <string name="title_activity_detail">DetailActivity</string>
+    <string name="room">Room</string>
 </resources>
