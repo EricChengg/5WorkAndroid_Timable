@@ -48,7 +48,7 @@ import au.edu.tafesa.itstudies.personal_timetable_android.models.Subjects;
 @SuppressWarnings("AccessStaticViaInstance")
 public class IndexActivity extends AppCompatActivity {
     private static final String THE_STUDENT_ID = "THE_STUDENT_ID";
-    public SimpleDateFormat theDate = new SimpleDateFormat("yyyy-MM-dd");
+    public SimpleDateFormat theDate = new SimpleDateFormat("dd-MM-yyyy");
     public SimpleDateFormat theTime = new SimpleDateFormat("HH:mm");
 
 
@@ -63,9 +63,13 @@ public class IndexActivity extends AppCompatActivity {
     public List<String> header = new ArrayList<String>();
     public List<ClassHasStudent> cs = new ArrayList<ClassHasStudent>();
 
-//    ImageButton earlyWeekButton = (ImageButton)findViewById(R.id.earlyWeekImageButton);
-//    ImageButton nextWeekButton = (ImageButton)findViewById(R.id.nextWeekImageButton);
-//    TextView weekTextView = (TextView) findViewById(R.id.weektextView);
+    public LocalDateTime firstDayOfWeek;
+    public LocalDateTime lastDayOfWeek;
+    public ListView listView;
+    public ScheduleViewAdapter adapter;
+    public TextView weekTextView;
+
+
 
 
     @Override
@@ -79,6 +83,16 @@ public class IndexActivity extends AppCompatActivity {
         // testing it is work.
         Toast.makeText(IndexActivity.this,"The student ID: " + studentID, Toast.LENGTH_LONG).show();
 
+        this.firstDayOfWeek = LocalDateTime.now().plusWeeks(0).with(DayOfWeek.SUNDAY);
+        this.lastDayOfWeek = LocalDateTime.now().plusWeeks(1).with(DayOfWeek.SATURDAY);
+
+        ImageButton earlyWeekButton = (ImageButton)findViewById(R.id.earlyWeekImageButton);
+        ImageButton nextWeekButton = (ImageButton)findViewById(R.id.nextWeekImageButton);
+        weekTextView = (TextView) findViewById(R.id.weektextView);
+        weekTextView.setText(toStringLocalDateTime(firstDayOfWeek)+ " - " +toStringLocalDateTime(lastDayOfWeek));
+
+        earlyWeekButton.setOnClickListener(new earlyWeekButtonHandler());
+        nextWeekButton.setOnClickListener(new nextWeekButtonHandler());
 
         try {
             runData();
@@ -86,19 +100,62 @@ public class IndexActivity extends AppCompatActivity {
             e.printStackTrace();
         }
 //      setting the List View
-        ListView listView = (ListView) this.findViewById(R.id.lvschedule);
-        listView.setAdapter(new ScheduleViewAdapter());
+        listView = (ListView) this.findViewById(R.id.lvschedule);
+        adapter = new ScheduleViewAdapter();
+        listView.setAdapter(adapter);
 //        set list view to be button
         ListViewItemSelectedHandler listViewItemSelectedHandler = new ListViewItemSelectedHandler();
         listView.setOnItemClickListener(listViewItemSelectedHandler);
-        sqLiteHelper.onUpgrade(database,1,1);
+        //sqLiteHelper.onUpgrade(database,1,1);
     }
 
-    private class earlyweekButtonHandler implements View.OnClickListener{
+    private class earlyWeekButtonHandler implements View.OnClickListener{
+
+        @Override
+        public void onClick(View view) {
+            listView.invalidateViews();
+            LocalDateTime newfirstDayOfWeek = firstDayOfWeek.plusWeeks(-1);
+            LocalDateTime newlastDayOfWeek = lastDayOfWeek.plusWeeks(-1);
+            weekTextView.setText(toStringLocalDateTime(newfirstDayOfWeek)+ " - " +toStringLocalDateTime(newlastDayOfWeek));
+
+            items.clear();
+            schedules.clear();
+
+            schedules = sqLiteHelper.getSchedule(database,cs,toStringLocalDateTimeForSelect(newfirstDayOfWeek),toStringLocalDateTimeForSelect(newlastDayOfWeek));
+
+            try {
+                addItem();
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+            System.out.println(items);
+            firstDayOfWeek = newfirstDayOfWeek;
+            lastDayOfWeek = newlastDayOfWeek;
+            adapter.notifyDataSetChanged();
+        }
+    }
+
+    private class nextWeekButtonHandler implements View.OnClickListener{
 
         @Override
         public void onClick(View view) {
 
+            firstDayOfWeek = firstDayOfWeek.plusWeeks(1);
+            lastDayOfWeek = lastDayOfWeek.plusWeeks(1);
+            weekTextView.setText(toStringLocalDateTime(firstDayOfWeek)+ " - " +toStringLocalDateTime(lastDayOfWeek));
+
+            items.clear();
+            schedules.clear();
+
+            schedules = sqLiteHelper.getSchedule(database,cs,toStringLocalDateTimeForSelect(firstDayOfWeek),toStringLocalDateTimeForSelect(lastDayOfWeek));
+
+            try {
+                addItem();
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+            System.out.println(items);
+            adapter.notifyDataSetChanged();
         }
     }
 
@@ -200,10 +257,7 @@ public class IndexActivity extends AppCompatActivity {
         database = sqLiteHelper.getWritableDatabase();
         cs = sqLiteHelper.getClassHasStudent(database, studentID);
         sessions = sqLiteHelper.getSessionList(database, cs);
-        classes = sqLiteHelper.findClassByClasshasStudent(database,cs);
-        subjects = sqLiteHelper.findSessionsBysubjectID(database, classes);
-        schedules = sqLiteHelper.getSchedule(database);
-        AddDate();
+        schedules = sqLiteHelper.getSchedule(database,cs,toStringLocalDateTimeForSelect(firstDayOfWeek),toStringLocalDateTimeForSelect(lastDayOfWeek));
         addItem();
     }
 
@@ -244,27 +298,52 @@ public class IndexActivity extends AppCompatActivity {
 
     public void addItem() throws ParseException {
         for(int i = 0; i < this.schedules.size(); i++){
-            for(int ii = 0; ii < 7; ii++){
-                String s1 = LocalDate.now().plusDays(ii).getYear() +"-"+LocalDate.now().plusDays(ii).getMonthValue()+"-"+LocalDate.now().plusDays(ii).getDayOfMonth();
-                Date d1 = theDate.parse(s1);
-                if(this.schedules.get(i).getDate().equals(d1)){
-                    if(this.items.contains(this.header.get(ii))){
+                //String sDate = this.schedules.get(i).getDate().getDay() + "-"+this.schedules.get(i).getDate().getMonth() +"-"+this.schedules.get(i).getDate().getYear();
+                    String sDate = theDate.format(this.schedules.get(i).getDate());
+            if (this.items.contains(sDate)) {
+                        this.items.add(this.schedules.get(i));
+                    } else {
+                        this.items.add(sDate);
                         this.items.add(this.schedules.get(i));
                     }
-                    else{
-                        this.items.add(this.header.get(ii));
-                        this.items.add(this.schedules.get(i));
-                    }
-                }
-            }
         }
     }
 
+    public String toStringLocalDateTime(LocalDateTime l){
+        String d = l.getDayOfMonth() + "/" + l.getMonthValue() +"/"+ l.getYear();
+        return d;
+    }
+
+    public String toStringLocalDateTimeForSelect(LocalDateTime l){
+        String day;
+        String month;
+        if (l.getDayOfMonth()<=9){
+            day = "0"+l.getDayOfMonth();
+        }
+        else{
+            day = String.valueOf(l.getDayOfMonth());
+        }
+        if(l.getMonthValue()<=9){
+            month = "0"+l.getMonthValue();
+        }
+        else{
+            month = String.valueOf(l.getMonthValue());
+        }
+
+        String d = l.getYear()+ "-"+ month + "-" + day;
+        return d;
+    }
+
+
+
     // setting header output.
     public void AddDate(){
-        this.header.add("Today");
-        for (int i = 1; i<7; i++){
-            this.header.add(toStringOfDate(LocalDateTime.now().plusDays(i)) +", "+ LocalDateTime.now().plusDays(i).getDayOfMonth() + " "+ toStringOfMonth(LocalDateTime.now().plusDays(i)));
+        //this.header.add("Today");
+        for (int i = 0; i<7; i++){
+            if(firstDayOfWeek.plusDays(i).equals(LocalDateTime.now())){
+                this.header.add("Today");
+            }
+            this.header.add(toStringOfDate(firstDayOfWeek.plusDays(i)) +", "+ firstDayOfWeek.plusDays(i).getDayOfMonth() + " "+ toStringOfMonth(firstDayOfWeek.plusDays(i)));
         }
     }
 

@@ -158,9 +158,23 @@ public class SQLiteHelper extends SQLiteOpenHelper {
 
             db.execSQL("insert INTO Assessment values(1,'testing name','2012-06-18','Test',1)");
 
-            db.execSQL("INSERT INTO Session values(1,1,'Testing session','14:00','16:00','B003','2018-10-18',1)");
-            db.execSQL("INSERT INTO Session values(2,1,'Testing2 session','17:00','19:00','B002','2018-10-24',2)");
-            db.execSQL("INSERT INTO Session values(3,1,'Testing3 session','17:00','19:00','B002','2018-10-27',2)");
+            db.execSQL("INSERT INTO Session values(1,1,'Testing session','14:00','16:00','B003','2018-10-21',1)");
+            db.execSQL("INSERT INTO Session values(2,1,'Testing2 session','17:00','19:00','B002','2018-10-22',2)");
+            db.execSQL("INSERT INTO Session values(3,1,'Testing3 session','17:00','19:00','B002','2018-11-8',1)");
+            db.execSQL("INSERT INTO Session values(4,1,'Testing4 session','14:00','16:00','B003','2018-11-5',1)");
+            db.execSQL("INSERT INTO Session values(5,1,'Testing5 session','21:00','22:00','B002','2018-11-11',2)");
+            db.execSQL("INSERT INTO Session values(6,1,'Testing6 session','18:00','21:00','B002','2018-11-9',2)");
+            db.execSQL("INSERT INTO Session values(7,1,'Testing7 session','18:00','21:00','B009','2018-10-29',1)");
+            db.execSQL("INSERT INTO Session values(8,1,'Testing session','14:00','16:00','B003','2018-10-18',1)");
+            db.execSQL("INSERT INTO Session values(9,1,'Testing5 session','21:00','22:00','B002','2018-11-10',2)");
+            db.execSQL("INSERT INTO Session values(10,1,'Testing5 session','21:00','22:00','B002','2018-11-6',2)");
+            db.execSQL("INSERT INTO Session values(11,1,'Testing5 session','21:00','22:00','B002','2018-10-31',2)");
+            db.execSQL("INSERT INTO Session values(12,1,'Testing5 session','21:00','22:00','B002','2018-11-1',2)");
+            db.execSQL("INSERT INTO Session values(13,1,'Testing5 session','21:00','22:00','B002','2018-11-4',2)");
+            db.execSQL("INSERT INTO Session values(14,1,'Testing5 session','21:00','22:00','B002','2018-11-12',2)");
+            db.execSQL("INSERT INTO Session values(15,1,'Testing5 session','21:00','22:00','B002','2018-11-13',2)");
+            db.execSQL("INSERT INTO Session values(16,1,'Testing5 session','21:00','22:00','B002','2018-11-14',2)");
+            db.execSQL("INSERT INTO Session values(17,1,'Testing5 session','21:00','22:00','B002','2018-11-30',2)");
 
 
             db.execSQL("INSERT INTO Class_has_Student values(1,103500)");
@@ -359,16 +373,29 @@ public class SQLiteHelper extends SQLiteOpenHelper {
         }
     }
 
-    public List<Schedule> getSchedule(SQLiteDatabase db){
+    public List<Schedule> getSchedule(SQLiteDatabase db,List<ClassHasStudent> cs,String startDate, String endDate){
         try {
-            LocalDate localDate = LocalDate.now().plusYears(1);
             String MY_QUERY = "select Subject.subjectID, Class.classID, Session.sessionID, Subject.subjectCode, Session.startTime, Session.endTime, Session.date, Session.room\n" +
                     "from Session\n" +
                     "inner join Class on Session.Class_classID = Class.classID\n " +
                     "inner join Subject on Class.Subject_subjectID = Subject.subjectID\n" +
-                    "where Session.date Between '2010-10-10' and '2020-10-10'";
+                    "where Session.date Between '"+ startDate +"' and '"+ endDate +"'";
 
-            System.out.println(MY_QUERY.toString());
+            if(cs.size()>0){
+                MY_QUERY = MY_QUERY + " and (";
+                for (int i = 0; i < cs.size(); i++){
+                    if(i > 0){
+                        MY_QUERY = MY_QUERY + " or Class.classID = " + cs.get(i).getclassID();
+                    }
+                    else{
+                        MY_QUERY = MY_QUERY + "Class.classID = " + cs.get(i).getclassID();
+                    }
+                }
+                MY_QUERY = MY_QUERY + ") ORDER BY Session.date, Session.startTime";
+            }
+
+
+            System.out.println(MY_QUERY);
 
             SimpleDateFormat theDate = new SimpleDateFormat("yyyy-MM-dd");
             SimpleDateFormat theTime = new SimpleDateFormat("hh:mm");
@@ -377,8 +404,7 @@ public class SQLiteHelper extends SQLiteOpenHelper {
             if(c != null) {
                 c.moveToFirst();
                 for (int i = 0; i < c.getCount(); i++) {
-                    int subjectID = 1;
-                    c.getInt(c.getColumnIndex("Subject.subjectID"));
+                    int subjectID = c.getInt(c.getColumnIndex("Subject.subjectID"));
                     int classID = c.getInt(c.getColumnIndex("Class.classID"));
                     int sessionID = c.getInt(c.getColumnIndex("Session.sessionID"));
                     String subjectCode = c.getString(c.getColumnIndex("Subject.subjectCode"));
@@ -390,9 +416,11 @@ public class SQLiteHelper extends SQLiteOpenHelper {
                     c.moveToNext();
                     System.out.println(subjects.toString());
                 }
+
                 c.close();
                 return schedules;
             }
+
             c.close();
             return null;
         }
