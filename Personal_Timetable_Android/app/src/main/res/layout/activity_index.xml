@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/container"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="au.edu.tafesa.itstudies.personal_timetable_android.activities.IndexActivity">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:orientation="horizontal"
+        android:layout_weight=".50">
+
+        <ImageButton
+            android:id="@+id/earlyWeekImageButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight=".20"
+            android:layout_gravity="center"
+            android:contentDescription="@string/earlybutton"
+            app:srcCompat="@drawable/back" />
+
+        <TextView
+            android:id="@+id/weektextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight=".50"
+            android:textSize="20sp"
+            android:text="@string/week"
+            android:gravity="center"
+            android:layout_gravity="center"/>
+
+        <ImageButton
+            android:id="@+id/nextWeekImageButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight=".20"
+            android:layout_gravity="center"
+            android:contentDescription="@string/nextbutton"
+            app:srcCompat="@drawable/go" />
+    </LinearLayout>
+
+
+
+    <ListView
+        android:id="@+id/lvschedule"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="40dp">
+    </ListView>
+
+
+    <!--<android.support.design.widget.BottomNavigationView-->
+        <!--android:id="@+id/navigation"-->
+        <!--android:layout_width="0dp"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_marginEnd="0dp"-->
+        <!--android:layout_marginStart="0dp"-->
+        <!--android:background="?android:attr/windowBackground"-->
+        <!--app:layout_constraintBottom_toBottomOf="parent"-->
+        <!--app:layout_constraintLeft_toLeftOf="parent"-->
+        <!--app:layout_constraintRight_toRightOf="parent"-->
+        <!--app:menu="@menu/navigation" />-->
+
+</android.support.constraint.ConstraintLayout>
