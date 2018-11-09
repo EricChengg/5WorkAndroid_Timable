@@ -5,6 +5,10 @@ public class Lecturer {
     private int lecturerID;
     private String lecturerName;
 
+    public Lecturer(){
+
+    }
+
     public Lecturer(int lecturerID, String lecturerName) {
         this.lecturerID = lecturerID;
         this.lecturerName = lecturerName;

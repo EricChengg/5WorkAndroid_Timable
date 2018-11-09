@@ -250,18 +250,18 @@ public class IndexActivity extends AppCompatActivity {
             onItemSelected(adapterView,view,i,l);
         }
 
+        // when user click the listview, the listview will pass classID, and sessionID to detail page.
         @Override
         public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
 
             if(items.get(i) instanceof Schedule) {
 
+
                 int classID = ((Schedule) items.get(i)).getClassID();
                 int sessionID = ((Schedule) items.get(i)).getSessionID();
-                int subjectID = ((Schedule) items.get(i)).getSubjectID();
                 Intent intent = new Intent();
                 intent.putExtra("TheClassID", classID);
                 intent.putExtra("TheSessionID", sessionID);
-                intent.putExtra("TheSubjectID", subjectID);
                 intent.setClass(IndexActivity.this, DetailActivity.class);
                 startActivity(intent);
             }

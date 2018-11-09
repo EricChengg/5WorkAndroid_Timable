@@ -11,9 +11,11 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import au.edu.tafesa.itstudies.personal_timetable_android.models.Assessment;
 import au.edu.tafesa.itstudies.personal_timetable_android.models.Class;
 import au.edu.tafesa.itstudies.personal_timetable_android.models.ClassHasStudent;
 import au.edu.tafesa.itstudies.personal_timetable_android.models.Classes;
+import au.edu.tafesa.itstudies.personal_timetable_android.models.Lecturer;
 import au.edu.tafesa.itstudies.personal_timetable_android.models.Schedule;
 import au.edu.tafesa.itstudies.personal_timetable_android.models.Session;
 import au.edu.tafesa.itstudies.personal_timetable_android.models.Sessions;
@@ -159,6 +161,7 @@ public class SQLiteHelper extends SQLiteOpenHelper {
             db.execSQL("INSERT INTO Class Values(2,1,1,2)");
 
             db.execSQL("insert INTO Assessment values(1,'testing name','2012-06-18','Test',1)");
+            db.execSQL("insert INTO Assessment values(2,'testing name','2012-06-18','Test',2)");
 
             db.execSQL("INSERT INTO Session values(1,1,'Testing session','14:00','16:00','B003','2018-10-21',1)");
             db.execSQL("INSERT INTO Session values(2,1,'Testing2 session','17:00','19:00','B002','2018-10-22',2)");
@@ -174,6 +177,7 @@ public class SQLiteHelper extends SQLiteOpenHelper {
             db.execSQL("INSERT INTO Session values(12,1,'Testing5 session','21:00','22:00','B002','2018-11-01',2)");
             db.execSQL("INSERT INTO Session values(13,1,'Testing5 session','21:00','22:00','B002','2018-11-04',2)");
             db.execSQL("INSERT INTO Session values(14,1,'Testing5 session','21:00','22:00','B002','2018-11-12',2)");
+            db.execSQL("INSERT INTO Session values(18,1,'Testing6 session','21:00','22:00','B002','2018-11-12',1)");
             db.execSQL("INSERT INTO Session values(15,1,'Testing5 session','21:00','22:00','B002','2018-11-13',2)");
             db.execSQL("INSERT INTO Session values(16,1,'Testing5 session','21:00','22:00','B002','2018-11-14',2)");
             db.execSQL("INSERT INTO Session values(17,1,'Testing5 session','21:00','22:00','B002','2018-11-30',2)");
@@ -221,7 +225,7 @@ public class SQLiteHelper extends SQLiteOpenHelper {
 
 
     public List<ClassHasStudent> getClassHasStudent(SQLiteDatabase db, int id) {
-        String[] columns ={"Class_classID","Student_studentID"};
+        String[] columns = {"Class_classID", "Student_studentID"};
         String[] whereValues = new String[1];
         String table = "Class_has_Student";
         String where = "Student_studentID =?";
@@ -239,68 +243,118 @@ public class SQLiteHelper extends SQLiteOpenHelper {
                     c.moveToNext();
                     System.out.println(theClassHasStudent.toString());
                 }
-
                 c.close();
-
-            } else {
-                System.out.println("Cursor is null.");
-                System.out.println(cs.toString());
-                c.close();
-                cs = null;
+                return cs;
             }
         } catch (SQLException e) {
             System.out.println("Error :" + e.getMessage());
         }
-        return cs;
+        return null;
     }
 
     @SuppressWarnings("ThrowablePrintedToSystemOut")
-    public Sessions getSessionList(SQLiteDatabase db, List<ClassHasStudent> cs) {
+    public Session getSession(SQLiteDatabase db, int sessionID) {
         try {
-            String[] columns = {"sessionID","sessionNo","topic","startTime","endTime","room","date","Class_classID" };
-            String[] whereValues = new String[cs.size()];
+            String[] columns = {"sessionNo", "topic", "startTime", "endTime", "room", "date", "Class_classID"};
+            String[] whereValues = new String[1];
             String where = "Class_classID =?";
-            String[] w = new String[cs.size()];
-
-            for(int i = 0 ; i < cs.size() ; i++) {
-                whereValues[i] = String.valueOf(cs.get(i).getclassID());
-                if(i + 1 < cs.size()) {
-                    w[i] = " or Class_classID =? ";
-                    where += w[i];
-                }
-                else
-                {
-                    //noting to do
-                }
-            }
             String table = "Session";
+            whereValues[0] = String.valueOf(sessionID);
             Cursor c = db.query(table, columns, where, whereValues, null, null, null, null);
-            if (c != null) {
-                c.moveToFirst();
-
-                for (int i = 0; i < c.getCount(); i++) {
-                    int sessionID = c.getInt(c.getColumnIndex("sessionID"));
-                    int sessionNo = c.getInt(c.getColumnIndex("sessionNo"));
-                    String topic = c.getString(c.getColumnIndex("topic"));
-                    Date startTime = theTime.parse(c.getString(c.getColumnIndex("startTime")));
-                    Date endTime = theTime.parse(c.getString(c.getColumnIndex("endTime")));
-                    Date date = theDate.parse(c.getString(c.getColumnIndex("date")));
-                    String room = c.getString(c.getColumnIndex("room"));
-                    int classID = c.getInt(c.getColumnIndex("Class_classID"));
-
-                    Session s = new Session(sessionID, sessionNo, topic, startTime, endTime, room, date, classID);
-                    sessions.save(s);
-                    c.moveToNext();
-                }
-            }
+            c.moveToFirst();
+            int sessionNo = c.getInt(c.getColumnIndex("sessionNo"));
+            String topic = c.getString(c.getColumnIndex("topic"));
+            Date startTime = theTime.parse(c.getString(c.getColumnIndex("startTime")));
+            Date endTime = theTime.parse(c.getString(c.getColumnIndex("endTime")));
+            Date date = theDate.parse(c.getString(c.getColumnIndex("date")));
+            String room = c.getString(c.getColumnIndex("room"));
+            int classID = c.getInt(c.getColumnIndex("Class_classID"));
+            Session s = new Session(sessionID, sessionNo, topic, startTime, endTime, room, date, classID);
+            c.moveToNext();
             c.close();
-            return sessions;
+            return s;
         } catch (Exception e) {
             System.out.println(e);
             System.out.println("Error");
             return null;
         }
     }
+
+    public Lecturer getLecture(SQLiteDatabase db, int lecturerID) {
+        try {
+            String[] columns = {"lectureName"};
+            String[] whereValues = new String[1];
+            String where = "lectureID =?";
+            String table = "Lecture";
+            whereValues[0] = String.valueOf(lecturerID);
+            Cursor c = db.query(table, columns, where, whereValues, null, null, null, null);
+            c.moveToFirst();
+            String lecturerName = c.getString(c.getColumnIndex("lecturerName"));
+            Lecturer l = new Lecturer(lecturerID, "lecturerName");
+            c.moveToNext();
+            c.close();
+            return l;
+        } catch (Exception e) {
+            System.out.println(e);
+            System.out.println("Error");
+            return null;
+        }
+    }
+
+    public Class getClass(SQLiteDatabase db, int classID) {
+        try {
+            String[] columns = {"Lecture_lectureID", "Subject_subjectID", "Campus_CampusID"};
+            String[] whereValues = new String[1];
+            String where = "classID =?";
+            String table = "Class";
+            whereValues[0] = String.valueOf(classID);
+            Cursor c = db.query(table, columns, where, whereValues, null, null, null, null);
+            c.moveToFirst();
+            int lecturerID = c.getInt(c.getColumnIndex("Lecture_lectureID"));
+            int subjectID = c.getInt(c.getColumnIndex("Subject_subjectID"));
+            int campusID = c.getInt(c.getColumnIndex("Campus_CampusID"));
+            Class theClass = new Class(classID,lecturerID,subjectID,campusID);
+            c.moveToNext();
+            c.close();
+            return theClass;
+        } catch (Exception e) {
+            System.out.println(e);
+            System.out.println("Error");
+            return null;
+        }
+    }
+
+    public List<Assessment> getAssessments(SQLiteDatabase db, int classID) throws Exception {
+        List<Assessment> assessmentList = new ArrayList<Assessment>();
+
+        String[] columns = {"assessmentID", "name","dueDate","type"};
+        String[] whereValues = new String[1];
+        String table = "Assessment";
+        String where = "Class_classID =?";
+        whereValues[0] = String.valueOf(classID);
+        try {
+            Cursor c = db.query(table, columns, where, whereValues, null, null, null, null);
+            int y = c.getColumnCount();
+            if (y > 0) {
+                c.moveToFirst();
+                for (int i = 0; i < c.getCount(); i++) {
+                    int id = c.getInt(c.getColumnIndex("assessmentID"));
+                    String name = c.getString(c.getColumnIndex("name"));
+                    Date dueDate = theDate.parse(c.getString(c.getColumnIndex("dueDate")));
+                    String type = c.getString(c.getColumnIndex("type"));
+                    assessmentList.add(new Assessment(id, name,dueDate,type,classID));
+                    c.moveToNext();
+                }
+                c.close();
+                return assessmentList;
+            }
+        } catch (SQLException e) {
+            System.out.println("Error :" + e.getMessage());
+        }
+        return null;
+    }
+
+
 
     public Classes findClassByClasshasStudent(SQLiteDatabase db, List<ClassHasStudent> cs) {
         try {
@@ -315,8 +369,7 @@ public class SQLiteHelper extends SQLiteOpenHelper {
                 if (i + 1 < cs.size()) {
                     w[i] = " or classID =? ";
                     where += w[i];
-                }
-                else {
+                } else {
                     //noting to do
                 }
             }
@@ -339,7 +392,7 @@ public class SQLiteHelper extends SQLiteOpenHelper {
         }
     }
 
-    public Subjects findSessionsBysubjectID(SQLiteDatabase db, Classes theClasses){
+    public Subjects findSessionsBysubjectID(SQLiteDatabase db, Classes theClasses) {
 
         try {
             String[] columns = {"subjectID", "subjectCode", "subjectName"};
@@ -349,7 +402,7 @@ public class SQLiteHelper extends SQLiteOpenHelper {
             String[] w = new String[theClasses.getSize()];
             for (int i = 0; i < theClasses.getSize(); i++) {
                 whereValues[i] = String.valueOf(theClasses.get(i).getSubjectID());
-                if(i +1  < theClasses.getSize()) {
+                if (i + 1 < theClasses.getSize()) {
                     w[i] = " or subjectID =? ";
                     where += w[i];
                 }
@@ -367,28 +420,26 @@ public class SQLiteHelper extends SQLiteOpenHelper {
             }
             c.close();
             return subjects;
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             System.out.println(e.getMessage());
             return null;
         }
     }
 
-    public List<Schedule> getSchedule(SQLiteDatabase db,List<ClassHasStudent> cs,String startDate, String endDate){
+    public List<Schedule> getSchedule(SQLiteDatabase db, List<ClassHasStudent> cs, String startDate, String endDate) {
         try {
             String MY_QUERY = "select Subject.subjectID, Class.classID, Session.sessionID, Subject.subjectCode, Session.startTime, Session.endTime, Session.date, Session.room\n" +
                     "from Session\n" +
                     "inner join Class on Session.Class_classID = Class.classID\n " +
                     "inner join Subject on Class.Subject_subjectID = Subject.subjectID\n" +
-                    "where Session.date Between '"+ startDate +"' and '"+ endDate +"'";
+                    "where Session.date Between '" + startDate + "' and '" + endDate + "'";
 
-            if(cs.size()>0){
+            if (cs.size() > 0) {
                 MY_QUERY = MY_QUERY + " and (";
-                for (int i = 0; i < cs.size(); i++){
-                    if(i > 0){
+                for (int i = 0; i < cs.size(); i++) {
+                    if (i > 0) {
                         MY_QUERY = MY_QUERY + " or Class.classID = " + cs.get(i).getclassID();
-                    }
-                    else{
+                    } else {
                         MY_QUERY = MY_QUERY + "Class.classID = " + cs.get(i).getclassID();
                     }
                 }
@@ -400,8 +451,8 @@ public class SQLiteHelper extends SQLiteOpenHelper {
 
 
             List<Schedule> schedules = new ArrayList<Schedule>();
-            Cursor c = db.rawQuery(MY_QUERY,null);
-            if(c != null) {
+            Cursor c = db.rawQuery(MY_QUERY, null);
+            if (c != null) {
                 c.moveToFirst();
                 for (int i = 0; i < c.getCount(); i++) {
                     int subjectID = c.getInt(c.getColumnIndex("Subject.subjectID"));
@@ -423,8 +474,7 @@ public class SQLiteHelper extends SQLiteOpenHelper {
 
             c.close();
             return null;
-        }
-        catch (Exception e){
+        } catch (Exception e) {
             return null;
         }
 

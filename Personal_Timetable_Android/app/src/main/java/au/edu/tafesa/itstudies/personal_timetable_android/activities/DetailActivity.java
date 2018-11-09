@@ -1,5 +1,8 @@
 package au.edu.tafesa.itstudies.personal_timetable_android.activities;
 
+import android.app.assist.AssistContent;
+import android.content.Intent;
+import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -7,9 +10,12 @@ import android.support.v7.widget.Toolbar;
 import android.text.method.ScrollingMovementMethod;
 import android.widget.TextView;
 
+import java.lang.reflect.Array;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import au.edu.tafesa.itstudies.personal_timetable_android.R;
 import au.edu.tafesa.itstudies.personal_timetable_android.SQlite.SQLiteHelper;
@@ -22,9 +28,8 @@ import au.edu.tafesa.itstudies.personal_timetable_android.models.Student;
 import au.edu.tafesa.itstudies.personal_timetable_android.models.Subject;
 
 public class DetailActivity extends AppCompatActivity {
-    public TextView sessionTextView;
+    private TextView sessionTextView;
     Session session;
-    Student student;
     Lecturer lecture;
     Subject theSubjeet;
     Class theclass;
@@ -33,14 +38,33 @@ public class DetailActivity extends AppCompatActivity {
     SimpleDateFormat theDate=new SimpleDateFormat("yyyy-MM-dd");
     SimpleDateFormat theTime=new SimpleDateFormat("hh:mm");
     SQLiteHelper sqLiteHelper = new SQLiteHelper(DetailActivity.this);
+    SQLiteDatabase database = null;
 
 
+
+    Class c = new Class();
+    Subject s = new Subject();
+    List<Assessment> assessmentList = new ArrayList<Assessment>();
+    Session se = new Session();
+    Lecturer l = new Lecturer();
+
+    int classID;
+    int sessionID;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        Intent intent;
+        intent = getIntent();
+        classID = intent.getIntExtra("TheClassID",0);
+        //subjectID = intent.getIntExtra("TheSubjectID",0);
+        sessionID = intent.getIntExtra("TheSessionID",0);
+
+        getDetail(classID,sessionID);
+
 
 
 
@@ -50,39 +74,43 @@ public class DetailActivity extends AppCompatActivity {
         sessionTextView.setMovementMethod(new ScrollingMovementMethod());
         sessionTextView.setBackgroundColor(Color.GREEN);
 
-
-//        studentTextView=(TextView) this.findViewById(R.id.studentTextView);
-//        studentTextView.setMovementMethod(new ScrollingMovementMethod());
-//        studentTextView.setBackgroundColor(Color.YELLOW);
         try
         {
             theSubjeet = new Subject(1,"5Work","Test Subject");
             session = new Session(2, 5, "Testing session", theTime.parse("14:00"), theTime.parse("16:00"), "B003", theDate.parse("2018-10-13"), 1);
             theclass = new Class(1,1,1,1);
-            sessionTextView.setText(toLayout(theSubjeet, theclass,session));
+            //assessmentID, String name, Date dueDate, String type, int classID
+            assessment = new Assessment(1, "Assesment 1", theDate.parse("2018-12-03"),"Assignment",1);
+            lecture = new Lecturer(1, "Kym");
+            sessionTextView.setText(toLayout(theSubjeet, theclass,session, assessment,lecture));
         } catch (ParseException e)
         {
             System.out.println(e);
         }
-
-
     }
 
 
-    public String toLayout(Subject s, Class c,Session se) throws ParseException {
-        //SQLiteHelper sqLiteHelper;
-        //int sessionID, int sessionNo, String topic, Date startTime,Date endTime, String room, Date date, int classID
-        Date d = theDate.parse("2018-10-31");
-        Date t1 = theTime.parse("13:00");
-        Date t2 = theTime.parse("15:00");
-        // Session s = new Session(1,2,"Test Topic", t1,t2,"B003",d,1);
-        //int subjectID, String subjectCode, String subjectName
-
-
+    public String toLayout(Subject s, Class c, Session se, Assessment a, Lecturer l) throws ParseException {
         System.out.println(theSubjeet.getSubjectCode());
 
-        String detail =  se.toString()+ "\n" +"\n"  + s.toString() + "\n" + c.toString();
+        String detail =  se.toString()+ "\n" +"\n"  + s.toString() + "\n" + c.toString()+"\n"+a.toString()+"\n"+ l.toString();
         return detail;
+
+    }
+
+    private void getDetail(int classID, int sessionID){
+        try{
+            database = sqLiteHelper.getWritableDatabase();
+            c = sqLiteHelper.getClass(database,classID);
+            se = sqLiteHelper.getSession(database,sessionID);
+            l = sqLiteHelper.getLecture(database,c.getLecturerID());
+            assessmentList = sqLiteHelper.getAssessments(database,classID);
+        }
+        catch (Exception e){
+            System.out.println(e);
+        }
+
+
 
     }
 }
