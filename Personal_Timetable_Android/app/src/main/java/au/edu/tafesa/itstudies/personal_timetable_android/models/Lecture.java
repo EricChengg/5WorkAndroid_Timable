@@ -1,15 +1,15 @@
 package au.edu.tafesa.itstudies.personal_timetable_android.models;
 
-public class Lecturer {
+public class Lecture {
 
     private int lecturerID;
     private String lecturerName;
 
-    public Lecturer(){
+    public Lecture(){
 
     }
 
-    public Lecturer(int lecturerID, String lecturerName) {
+    public Lecture(int lecturerID, String lecturerName) {
         this.lecturerID = lecturerID;
         this.lecturerName = lecturerName;
     }

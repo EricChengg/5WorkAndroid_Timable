@@ -22,7 +22,7 @@ import au.edu.tafesa.itstudies.personal_timetable_android.SQlite.SQLiteHelper;
 import au.edu.tafesa.itstudies.personal_timetable_android.models.Assessment;
 import au.edu.tafesa.itstudies.personal_timetable_android.models.Campus;
 import au.edu.tafesa.itstudies.personal_timetable_android.models.Class;
-import au.edu.tafesa.itstudies.personal_timetable_android.models.Lecturer;
+import au.edu.tafesa.itstudies.personal_timetable_android.models.Lecture;
 import au.edu.tafesa.itstudies.personal_timetable_android.models.Session;
 import au.edu.tafesa.itstudies.personal_timetable_android.models.Student;
 import au.edu.tafesa.itstudies.personal_timetable_android.models.Subject;
@@ -38,7 +38,7 @@ public class DetailActivity extends AppCompatActivity {
     Subject s = new Subject();
     List<Assessment> assessmentList = new ArrayList<Assessment>();
     Session se = new Session();
-    Lecturer l = new Lecturer();
+    Lecture l = new Lecture();
     Campus campus = new Campus();
 
     int classID;
@@ -69,7 +69,7 @@ public class DetailActivity extends AppCompatActivity {
         }
         sqLiteHelper.onUpgrade(database,1,1);
     }
-    public String toLayout(Subject s, Class c, Session se, List<Assessment> a, Lecturer l, Campus camp ) throws ParseException {
+    public String toLayout(Subject s, Class c, Session se, List<Assessment> a, Lecture l, Campus camp ) throws ParseException {
 
         String detail;
                 //=  se.toString()+ "\n" +"\n"  + s.toString() + "\n" + c.toString()+"\n"+a.toString()+"\n"+ l.toString();

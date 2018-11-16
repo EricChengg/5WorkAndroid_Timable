@@ -16,7 +16,7 @@ import au.edu.tafesa.itstudies.personal_timetable_android.models.Campus;
 import au.edu.tafesa.itstudies.personal_timetable_android.models.Class;
 import au.edu.tafesa.itstudies.personal_timetable_android.models.ClassHasStudent;
 import au.edu.tafesa.itstudies.personal_timetable_android.models.Classes;
-import au.edu.tafesa.itstudies.personal_timetable_android.models.Lecturer;
+import au.edu.tafesa.itstudies.personal_timetable_android.models.Lecture;
 import au.edu.tafesa.itstudies.personal_timetable_android.models.Schedule;
 import au.edu.tafesa.itstudies.personal_timetable_android.models.Session;
 import au.edu.tafesa.itstudies.personal_timetable_android.models.Sessions;
@@ -155,14 +155,16 @@ public class SQLiteHelper extends SQLiteOpenHelper {
             db.execSQL("INSERT INTO Subject values(2,'6Work','Testing Project')");
 
             db.execSQL("INSERT INTO Lecture values(1,'Kym')");
+            db.execSQL("INSERT INTO Lecture values(2,'KT')");
 
             db.execSQL("INSERT INTO Campus values(1,'Testcamput','test','testing')");
 
             db.execSQL("INSERT INTO Class Values(1,1,1,1)");
             db.execSQL("INSERT INTO Class Values(2,1,1,2)");
 
-            db.execSQL("insert INTO Assessment values(1,'testing name','2012-06-18','Test',1)");
-            db.execSQL("insert INTO Assessment values(2,'testing name','2012-06-18','Test',2)");
+            db.execSQL("insert INTO Assessment values(1,'testing name1','2012-06-18','Test',1)");
+            db.execSQL("insert INTO Assessment values(2,'testing name2','2012-06-18','Test',2)");
+            db.execSQL("insert INTO Assessment values(3,'testing name3','2012-06-18','Test',2)");
 
             db.execSQL("INSERT INTO Session values(1,1,'Testing session','14:00','16:00','B003','2018-10-21',1)");
             db.execSQL("INSERT INTO Session values(2,1,'Testing2 session','17:00','19:00','B002','2018-10-22',2)");
@@ -258,7 +260,7 @@ public class SQLiteHelper extends SQLiteOpenHelper {
         try {
             String[] columns = {"sessionNo", "topic", "startTime", "endTime", "room", "date", "Class_classID"};
             String[] whereValues = new String[1];
-            String where = "Class_classID =?";
+            String where = "sessionID =?";
             String table = "Session";
             whereValues[0] = String.valueOf(sessionID);
             Cursor c = db.query(table, columns, where, whereValues, null, null, null, null);
@@ -281,7 +283,7 @@ public class SQLiteHelper extends SQLiteOpenHelper {
         }
     }
 
-    public Lecturer getLecture(SQLiteDatabase db, int lecturerID) {
+    public Lecture getLecture(SQLiteDatabase db, int lecturerID) {
         try {
             String[] columns = {"lectureName"};
             String[] whereValues = new String[1];
@@ -290,8 +292,8 @@ public class SQLiteHelper extends SQLiteOpenHelper {
             whereValues[0] = String.valueOf(lecturerID);
             Cursor c = db.query(table, columns, where, whereValues, null, null, null, null);
             c.moveToFirst();
-            String lecturerName = c.getString(c.getColumnIndex("lecturerName"));
-            Lecturer l = new Lecturer(lecturerID, "lecturerName");
+            String lectureName = c.getString(c.getColumnIndex("lectureName"));
+            Lecture l = new Lecture(lecturerID, lectureName);
             c.moveToNext();
             c.close();
             return l;
