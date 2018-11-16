@@ -76,13 +76,14 @@ public class DetailActivity extends AppCompatActivity {
 
         try
         {
-            theSubjeet = new Subject(1,"5Work","Test Subject");
+            theSubjeet = new Subject(1,"TGG4","5 WORK");
+            campus  = new Campus(22, "TAFESA Capuss", "444444", "Curry Street");
             session = new Session(2, 5, "Testing session", theTime.parse("14:00"), theTime.parse("16:00"), "B003", theDate.parse("2018-10-13"), 1);
             theclass = new Class(1,1,1,1);
             //assessmentID, String name, Date dueDate, String type, int classID
             assessment = new Assessment(1, "Assesment 1", theDate.parse("2018-12-03"),"Assignment",1);
             lecture = new Lecturer(1, "Kym");
-            sessionTextView.setText(toLayout(theSubjeet, theclass,session, assessment,lecture));
+            sessionTextView.setText(toLayout(theSubjeet, theclass,session, assessment,lecture, campus));
         } catch (ParseException e)
         {
             System.out.println(e);
@@ -90,11 +91,26 @@ public class DetailActivity extends AppCompatActivity {
     }
 
 
-    public String toLayout(Subject s, Class c, Session se, Assessment a, Lecturer l) throws ParseException {
+    public String toLayout(Subject s, Class c, Session se, Assessment a, Lecturer l, Campus camp ) throws ParseException {
         System.out.println(theSubjeet.getSubjectCode());
 
-        String detail =  se.toString()+ "\n" +"\n"  + s.toString() + "\n" + c.toString()+"\n"+a.toString()+"\n"+ l.toString();
-        return detail;
+        String detail;
+                //=  se.toString()+ "\n" +"\n"  + s.toString() + "\n" + c.toString()+"\n"+a.toString()+"\n"+ l.toString();
+                                       detail = "Class No : " +c.getClassID()
+                                               + "\n \nSubject Name : "+ s.getSubjectName()+
+                                               "\n \n Lecturer Name: " + l.getLecturerName()
+                                               +" \n \n Campus Name:  "+ camp.getCampusName()
+                                               +"\n Campus Address : " +camp.getAddress()
+                                               +" \n \n Session No : "+  se.getSessionNo()
+                                               +" \n Session time: "+se.getDate().toString()
+                               // +"\n  \n Subject Code: " +s.getSubjectCode()
+
+                              //  + " \n  \n Assessment ID : " + a.getAssessmentID()
+                                               +"\n  \n  Assement Name : "+a.getName()
+                                               +"\n \n  Type Of Assessment : "+a.getType()+
+                                               "\n \n  Assement Date : " + a.getDueDate().toString();
+
+                                return detail;
 
     }
 

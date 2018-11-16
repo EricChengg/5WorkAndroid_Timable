@@ -1,5 +1,6 @@
 package au.edu.tafesa.itstudies.personal_timetable_android.models;
 
+import java.util.Calendar;
 import java.util.Date;
 
 public class Assessment {
@@ -59,5 +60,16 @@ public class Assessment {
 
     public void setClassID(int classID) {
         this.classID = classID;
+    }
+
+    @Override
+    public String toString() {
+        return "Assessment{" +
+                "assessmentID=" + assessmentID +
+                ", name='" + name + '\'' +
+                ", dueDate=" + dueDate +
+                ", type='" + type + '\'' +
+                ", classID=" + classID +
+                '}';
     }
 }

@@ -30,5 +30,11 @@ public class Lecturer {
         this.lecturerName = lecturerName;
     }
 
-
+    @Override
+    public String toString() {
+        return "Lecturer{" +
+                "lecturerID=" + lecturerID +
+                ", lecturerName='" + lecturerName + '\'' +
+                '}';
+    }
 }
