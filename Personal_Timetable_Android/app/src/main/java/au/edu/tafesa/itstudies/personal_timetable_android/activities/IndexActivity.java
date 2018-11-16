@@ -67,8 +67,8 @@ public class IndexActivity extends AppCompatActivity {
         // testing it is work.
         Toast.makeText(IndexActivity.this,"The student ID: " + studentID, Toast.LENGTH_LONG).show();
 
-        this.firstDayOfWeek = LocalDateTime.now().plusWeeks(0).with(DayOfWeek.SUNDAY);
-        this.lastDayOfWeek = LocalDateTime.now().plusWeeks(1).with(DayOfWeek.SATURDAY);
+        this.firstDayOfWeek = LocalDateTime.now().plusWeeks(-1).with(DayOfWeek.SUNDAY);
+        this.lastDayOfWeek = LocalDateTime.now().plusWeeks(0).with(DayOfWeek.SATURDAY);
 
         ImageButton earlyWeekButton = (ImageButton)findViewById(R.id.earlyWeekImageButton);
         ImageButton nextWeekButton = (ImageButton)findViewById(R.id.nextWeekImageButton);

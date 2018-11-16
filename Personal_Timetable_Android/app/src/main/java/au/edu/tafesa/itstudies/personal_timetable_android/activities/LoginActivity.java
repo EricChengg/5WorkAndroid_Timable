@@ -40,6 +40,12 @@ public class LoginActivity extends AppCompatActivity {
 
 
     }
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        sqLiteHelper.onUpgrade(database,1,1);
+        System.out.println("onDestroy");
+    }
 
     // setting login function
     public class HandleButtonLoginClick implements View.OnClickListener {

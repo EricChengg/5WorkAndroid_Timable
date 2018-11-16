@@ -12,6 +12,7 @@ import java.util.Date;
 import java.util.List;
 
 import au.edu.tafesa.itstudies.personal_timetable_android.models.Assessment;
+import au.edu.tafesa.itstudies.personal_timetable_android.models.Campus;
 import au.edu.tafesa.itstudies.personal_timetable_android.models.Class;
 import au.edu.tafesa.itstudies.personal_timetable_android.models.ClassHasStudent;
 import au.edu.tafesa.itstudies.personal_timetable_android.models.Classes;
@@ -232,7 +233,7 @@ public class SQLiteHelper extends SQLiteOpenHelper {
         whereValues[0] = String.valueOf(id);
         try {
             Cursor c = db.query(table, columns, where, whereValues, null, null, null, null);
-            int y = c.getColumnCount();
+            int y = c.getCount();
             if (y > 0) {
                 c.moveToFirst();
                 for (int i = 0; i < c.getCount(); i++) {
@@ -334,10 +335,10 @@ public class SQLiteHelper extends SQLiteOpenHelper {
         whereValues[0] = String.valueOf(classID);
         try {
             Cursor c = db.query(table, columns, where, whereValues, null, null, null, null);
-            int y = c.getColumnCount();
+            int y = c.getCount();
             if (y > 0) {
                 c.moveToFirst();
-                for (int i = 0; i < c.getCount(); i++) {
+                for (int i = 0; i < y; i++) {
                     int id = c.getInt(c.getColumnIndex("assessmentID"));
                     String name = c.getString(c.getColumnIndex("name"));
                     Date dueDate = theDate.parse(c.getString(c.getColumnIndex("dueDate")));
@@ -477,7 +478,53 @@ public class SQLiteHelper extends SQLiteOpenHelper {
         } catch (Exception e) {
             return null;
         }
-
     }
+    public Subject getSubject(SQLiteDatabase db, int SubjectID) {
+        try {
+            String[] columns = {"subjectID", "subjectCode", "subjectName"};
+            String[] whereValues = new String[1];
+            String where = "subjectID =?";
+            String table = "subject";
+            whereValues[0] = String.valueOf(SubjectID);
+            Cursor c = db.query(table, columns, where, whereValues, null, null, null, null);
+            c.moveToFirst();
+            int id = SubjectID;
+            String code = c.getString(c.getColumnIndex("subjectCode"));
+            String name = c.getString(c.getColumnIndex("subjectName"));
+            Subject subject = new Subject(id,code,name);
+            c.moveToNext();
+            c.close();
+            return subject;
+        } catch (Exception e) {
+            System.out.println(e);
+            System.out.println("Error");
+            return null;
+        }
+    }
+    public Campus getCampus(SQLiteDatabase db, int CampusID) {
+        try {
+            String[] columns = {"CampusID", "campusName", "campusCode", "address" };
+            String[] whereValues = new String[1];
+            String where = "CampusID =?";
+            String table = "Campus";
+            whereValues[0] = String.valueOf(CampusID);
+            Cursor c = db.query(table, columns, where, whereValues, null, null, null, null);
+            c.moveToFirst();
+            int id = CampusID;
+            String name = c.getString(c.getColumnIndex("campusName"));
+            String code = c.getString(c.getColumnIndex("campusCode"));
+            String address = c.getString(c.getColumnIndex("address"));
+
+            Campus campus = new Campus(id, name,code,address);
+            c.moveToNext();
+            c.close();
+            return campus;
+        } catch (Exception e) {
+            System.out.println(e);
+            System.out.println("Error");
+            return null;
+        }
+    }
+
 }
 

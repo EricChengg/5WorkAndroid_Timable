@@ -29,24 +29,17 @@ import au.edu.tafesa.itstudies.personal_timetable_android.models.Subject;
 
 public class DetailActivity extends AppCompatActivity {
     private TextView sessionTextView;
-    Session session;
-    Lecturer lecture;
-    Subject theSubjeet;
-    Class theclass;
-    Assessment assessment;
-    Campus campus;
     SimpleDateFormat theDate=new SimpleDateFormat("yyyy-MM-dd");
     SimpleDateFormat theTime=new SimpleDateFormat("hh:mm");
     SQLiteHelper sqLiteHelper = new SQLiteHelper(DetailActivity.this);
     SQLiteDatabase database = null;
-
-
 
     Class c = new Class();
     Subject s = new Subject();
     List<Assessment> assessmentList = new ArrayList<Assessment>();
     Session se = new Session();
     Lecturer l = new Lecturer();
+    Campus campus = new Campus();
 
     int classID;
     int sessionID;
@@ -60,15 +53,8 @@ public class DetailActivity extends AppCompatActivity {
         Intent intent;
         intent = getIntent();
         classID = intent.getIntExtra("TheClassID",0);
-        //subjectID = intent.getIntExtra("TheSubjectID",0);
         sessionID = intent.getIntExtra("TheSessionID",0);
-
         getDetail(classID,sessionID);
-
-
-
-
-
 
         sessionTextView=(TextView) this.findViewById(R.id.sessionTextView);
         sessionTextView.setMovementMethod(new ScrollingMovementMethod());
@@ -76,23 +62,14 @@ public class DetailActivity extends AppCompatActivity {
 
         try
         {
-            theSubjeet = new Subject(1,"TGG4","5 WORK");
-            campus  = new Campus(22, "TAFESA Capuss", "444444", "Curry Street");
-            session = new Session(2, 5, "Testing session", theTime.parse("14:00"), theTime.parse("16:00"), "B003", theDate.parse("2018-10-13"), 1);
-            theclass = new Class(1,1,1,1);
-            //assessmentID, String name, Date dueDate, String type, int classID
-            assessment = new Assessment(1, "Assesment 1", theDate.parse("2018-12-03"),"Assignment",1);
-            lecture = new Lecturer(1, "Kym");
-            sessionTextView.setText(toLayout(theSubjeet, theclass,session, assessment,lecture, campus));
+            sessionTextView.setText(toLayout(s, c,se, assessmentList,l, campus));
         } catch (ParseException e)
         {
             System.out.println(e);
         }
+        sqLiteHelper.onUpgrade(database,1,1);
     }
-
-
-    public String toLayout(Subject s, Class c, Session se, Assessment a, Lecturer l, Campus camp ) throws ParseException {
-        System.out.println(theSubjeet.getSubjectCode());
+    public String toLayout(Subject s, Class c, Session se, List<Assessment> a, Lecturer l, Campus camp ) throws ParseException {
 
         String detail;
                 //=  se.toString()+ "\n" +"\n"  + s.toString() + "\n" + c.toString()+"\n"+a.toString()+"\n"+ l.toString();
@@ -103,15 +80,24 @@ public class DetailActivity extends AppCompatActivity {
                                                +"\n Campus Address : " +camp.getAddress()
                                                +" \n \n Session No : "+  se.getSessionNo()
                                                +" \n Session time: "+se.getDate().toString()
-                               // +"\n  \n Subject Code: " +s.getSubjectCode()
-
-                              //  + " \n  \n Assessment ID : " + a.getAssessmentID()
-                                               +"\n  \n  Assement Name : "+a.getName()
-                                               +"\n \n  Type Of Assessment : "+a.getType()+
-                                               "\n \n  Assement Date : " + a.getDueDate().toString();
-
+                                               + printAssessment(a);
                                 return detail;
+    }
 
+    public String printAssessment(List<Assessment> assessments){
+        String s = "";
+        for(int i = 0; i< assessments.size(); i++){
+           s += "\n  \n  Assement Name : "+ assessments.get(i).getName()
+                   +"\n \n  Type Of Assessment : "+assessments.get(i).getType()+
+                   "\n \n  Assement Date : " + assessments.get(i).getDueDate().toString();
+        }
+        return s;
+    }
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        sqLiteHelper.onUpgrade(database,1,1);
+        System.out.println("onDestroy");
     }
 
     private void getDetail(int classID, int sessionID){
@@ -121,12 +107,12 @@ public class DetailActivity extends AppCompatActivity {
             se = sqLiteHelper.getSession(database,sessionID);
             l = sqLiteHelper.getLecture(database,c.getLecturerID());
             assessmentList = sqLiteHelper.getAssessments(database,classID);
+            campus = sqLiteHelper.getCampus(database,c.getCampusID());
+            s = sqLiteHelper.getSubject(database,c.getSubjectID());
+
         }
         catch (Exception e){
             System.out.println(e);
         }
-
-
-
     }
 }
