@@ -17,23 +17,22 @@ import au.edu.tafesa.itstudies.personal_timetable_android.SQlite.SQLiteHelper;
  */
 
 public class LoginActivity extends AppCompatActivity {
-    private static final int LOGIN_REQUEST = 1;
 
 
     private SQLiteDatabase database = null;
 
-    private SQLiteHelper sqLiteHelper = new SQLiteHelper(this);
+    private final SQLiteHelper sqLiteHelper = new SQLiteHelper(this);
 
     private static final String THE_STUDENT_ID = "THE_STUDENT_ID";
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-        // running sqlitedatabase
+        // running Sqlite database
         database = sqLiteHelper.getWritableDatabase();
 
         // getting and setting login button
-        Button btnLogin = (Button) findViewById(R.id.email_sign_in_button);
+        Button btnLogin = findViewById(R.id.email_sign_in_button);
         HandleButtonLoginClick handleButtonLoginClick = new HandleButtonLoginClick();
         btnLogin.setOnClickListener(handleButtonLoginClick);
         sqLiteHelper.onUpgrade(database,1,1);
@@ -48,18 +47,18 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     // setting login function
-    public class HandleButtonLoginClick implements View.OnClickListener {
+    private class HandleButtonLoginClick implements View.OnClickListener {
         public void onClick(View v) {
 
-            // getting stduent id and password input from edit text.
-            EditText txtPassword = (EditText) findViewById(R.id.password);
-            EditText txtLoginID = (EditText) findViewById(R.id.loginID);
+            // getting student id and password input from edit text.
+            EditText txtPassword = findViewById(R.id.password);
+            EditText txtLoginID = findViewById(R.id.loginID);
 
             // convent edit text to String and int.
             String password = txtPassword.getText().toString();
             int id = Integer.parseInt(txtLoginID.getText().toString());
 
-            // looking for the id and password in the sqlite
+            // looking for the id and password in the Sqlite
             // if the cursor row is one, go to index page. if the cursor is not one it will display error message or another id and password.
             if ((sqLiteHelper.verifyStudentLogin(database, id, password)) != 0) {
                 Intent intent = new Intent();
@@ -69,7 +68,7 @@ public class LoginActivity extends AppCompatActivity {
             }
             else {
 
-                Toast.makeText(LoginActivity.this, "Please try ID:103500 / Password: 5work.", Toast.LENGTH_LONG).show();
+                Toast.makeText(LoginActivity.this, "Incorrect student ID or password.", Toast.LENGTH_LONG).show();
 
             }
         }

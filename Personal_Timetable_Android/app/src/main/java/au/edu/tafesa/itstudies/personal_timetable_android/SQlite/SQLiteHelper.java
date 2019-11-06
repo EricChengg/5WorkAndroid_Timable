@@ -166,8 +166,8 @@ public class SQLiteHelper extends SQLiteOpenHelper {
             db.execSQL("insert INTO Assessment values(2,'testing name2','2012-06-18','Test',2)");
             db.execSQL("insert INTO Assessment values(3,'testing name3','2012-06-18','Test',2)");
 
-            db.execSQL("INSERT INTO Session values(1,1,'Testing session','14:00','16:00','B003','2018-10-21',1)");
-            db.execSQL("INSERT INTO Session values(2,1,'Testing2 session','17:00','19:00','B002','2018-10-22',2)");
+            db.execSQL("INSERT INTO Session values(1,1,'Testing session','14:00','16:00','B003','2019-02-13',1)");
+            db.execSQL("INSERT INTO Session values(2,1,'Testing2 session','17:00','19:00','B002','2019-02-15',2)");
             db.execSQL("INSERT INTO Session values(3,1,'Testing3 session','17:00','19:00','B002','2018-11-08',1)");
             db.execSQL("INSERT INTO Session values(4,1,'Testing4 session','14:00','16:00','B003','2018-11-05',1)");
             db.execSQL("INSERT INTO Session values(5,1,'Testing5 session','21:00','22:00','B002','2018-11-11',2)");

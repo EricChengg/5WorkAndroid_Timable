@@ -58,3 +58,19 @@ public class Class {
                 '}';
     }
 }
+
+
+//  select TableA.name form TableA
+//  lift join TableA on TableB.TableA_id = TableA.id
+//  Order by TableA.id;
+
+//  select TableA.name form TableA
+//  Right join TableA on TableA.id = TableB.TableA_id
+//  Order by TableA.id;
+
+//  select TableA.name form TableA
+//  where TableA.id == TableB.TableA_id
+//  Order by TableA.id;
+
+
+

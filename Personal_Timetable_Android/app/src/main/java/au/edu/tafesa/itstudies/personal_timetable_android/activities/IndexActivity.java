@@ -255,8 +255,6 @@ public class IndexActivity extends AppCompatActivity {
         public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
 
             if(items.get(i) instanceof Schedule) {
-
-
                 int classID = ((Schedule) items.get(i)).getClassID();
                 int sessionID = ((Schedule) items.get(i)).getSessionID();
                 Intent intent = new Intent();
@@ -314,7 +312,7 @@ public class IndexActivity extends AppCompatActivity {
     }
 
     @SuppressWarnings("AccessStaticViaInstance")
-    private static String toStringOfDate(LocalDateTime date){
+    public String toStringOfDate(LocalDateTime date){
         //noinspection AccessStaticViaInstance
         if(date.getDayOfWeek().equals(date.getDayOfWeek().MONDAY)){
             return "Mon";
@@ -342,7 +340,7 @@ public class IndexActivity extends AppCompatActivity {
         }
     }
 
-    private static String toStringOfMonth(LocalDateTime date){
+    public String toStringOfMonth(LocalDateTime date){
         if(date.getMonth().equals(date.getMonth().JANUARY)){
             return "Jan";
         }
